@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: calorie_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: simple_food_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: calorie_n8n
+    restart: unless-stopped
+    ports:
+      - "6000:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_DATABASE=simple_food_db
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_USER=admin
+      - DB_POSTGRESDB_PASSWORD=admin
+      - N8N_BASIC_AUTH_ACTIVE=false 
+      - WEBHOOK_URL=http://localhost:6000/
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - postgres
+
+  # 3. WhatsApp API: WAHA
+  waha:
+    image: devlikeapro/waha
+    container_name: calorie_waha
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - WAHA_PRINT_QR=true
+    volumes:
+      - waha_data:/app/.sessions
+
+volumes:
+  postgres_data:
+  n8n_data:
+  waha_data:
