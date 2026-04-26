@@ -11,7 +11,7 @@ Este projeto foi desenhado para ser fácil de rodar em qualquer ambiente, utiliz
 * **Banco de Dados:** PostgreSQL.
 * **Mensageria/WhatsApp:** WAHA (WhatsApp HTTP API).
 * **Orquestração e IA:** n8n (Gerencia o fluxo de recebimento via WAHA, processamento da IA e integração com a API externa).
-* **Base de Dados de Alimentos:** Open Food Facts (API global e open-source para consulta nutricional).
+* **Base de Dados de Alimentos:** USDA (API global e open-source para consulta nutricional).
 
 ## ⚙️ Pré-requisitos
 

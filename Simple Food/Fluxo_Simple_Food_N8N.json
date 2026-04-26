@@ -1,0 +1,566 @@
+{
+  "name": "Simple Food",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "SimpleFood",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1824,
+        -288
+      ],
+      "id": "3711b50e-9533-4331-87f2-9d09ae70990b",
+      "name": "Webhook",
+      "webhookId": "b412d927-c2f2-49b9-97e9-5637d04cf743"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2d8e42d7-e30f-4f10-a3ac-513229cbd2e1",
+              "name": "group_id",
+              "value": "={{ $json.body.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "6a3dec03-5fbf-44a5-b325-b0fe5d11a336",
+              "name": "message",
+              "value": "={{ $json.body.payload._data.Message.conversation }}",
+              "type": "string"
+            },
+            {
+              "id": "8f3897d9-af10-493f-9a8a-387f58eeaf59",
+              "name": "hasMedia",
+              "value": "={{ $json.body.payload.hasMedia }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2a7644e1-d49f-40e6-a859-6eb065d9e182",
+              "name": "media_url",
+              "value": "={{ $json.body.payload.media.url }}",
+              "type": "string"
+            },
+            {
+              "id": "893462f2-b030-4d85-bba9-ad60e1a2ebef",
+              "name": "whatssap_number",
+              "value": "={{ $json.body.me.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1616,
+        -288
+      ],
+      "id": "66fca89b-02b6-4a7a-b58e-b45d706e9a36",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fde45ca1-34b2-428c-acab-b277441f90d5",
+              "leftValue": "={{ $json.group_id }}",
+              "rightValue": "120363427797560173@g.us",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1408,
+        -288
+      ],
+      "id": "9a99b523-8818-4489-80b6-95a5e9562247",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        144
+      ],
+      "id": "bfb1b821-ca8e-41be-a6b0-191e426dea8e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "69139e34-bf6a-47bb-80b0-42d3cde43d4f",
+              "leftValue": "={{ $json.hasMedia }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1200,
+        -384
+      ],
+      "id": "baf9d1a2-e168-41be-878c-df15e1e48fd9",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Você é um extrator de dados dietéticos automatizado. Sua função é analisar textos onde usuários descrevem o que consumiram e converter essas informações estritamente em um formato JSON otimizado para busca na API USDA (FDC).  Você não deve responder com saudações, conversas ou explicações. Retorne APENAS o JSON válido.  REGRAS DE EXTRAÇÃO E CONVERSÃO: 1. Medidas Imprecisas (Estimativa Pragmática): O usuário enviará medidas vagas. Você deve estimar o peso exato em gramas (g) usando os seguintes padrões:  \"um copo\" ou \"uma xícara\" = 240g.  \"uma colher de sopa\" = 15g | \"uma colher de chá\" = 5g.  \"um prato\" = 150g a 200g por item principal.  \"uma unidade\" (Ex: maçã = 150g, pão francês = 50g, ovo = 50g, banana = 120g).  \"ml\" = converta 1:1 para gramas (ex: 200ml = 200g).  Tag de Categoria Específica (Foco USDA): Para que a busca na API do USDA seja precisa, a category_tag deve ser altamente específica em inglês, incluindo o estado ou tipo do alimento se mencionado ou implícito.  Busca granular: Em vez de \"rice\", use \"brown-rice\", \"white-rice\" ou \"cooked-long-grain-rice\".  Carnes: Em vez de \"chicken\", use \"chicken-breast-boneless-skinless\" ou \"grilled-beef-steak\".  Processados: Use nomes técnicos em inglês (ex: \"whole-wheat-bread\", \"greek-yogurt-plain\").  FORMATO DE SAÍDA OBRIGATÓRIO (JSON): ```json {  \"items\": [  {  \"quantity_g\": 0,  \"category_tag\": \"specific-search-term-in-english\"  }, \"food_name_br\": \"Nome do alimento em portugues\"  ] }   **EXEMPLOS DE COMPORTAMENTO:** **Entrada:** \"Comi dois ovos cozidos e uma fatia de pão integral com uma colher de manteiga\"  **Saída:** ```json {    \"items\": [       {           \"quantity_g\": 100,           \"category_tag\": \"hard-boiled-eggs\", \"food_name_br\": \"ovos cozidos\"        },        {           \"quantity_g\": 30,           \"category_tag\": \"whole-wheat-bread, \"food_name_br\": \"pao\"        },        {           \"quantity_g\": 15,           \"category_tag\": \"unsalted-butter\"        }     ]  }"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -1088,
+        -800
+      ],
+      "id": "88cbec81-675a-4bc5-b26d-48ae951d245c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        192,
+        -560
+      ],
+      "id": "6e035b00-4a91-48f7-8209-04374826e8c7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Pegue o texto que o OpenRouter gerou. \n// ATENÇÃO: Mude o \".text\" abaixo para o nome exato do campo que o seu nó do OpenRouter está retornando (pode ser .message ou .content)\nlet respostaIA = $input.item.json.text; \n\n// 2. Limpa qualquer formatação de markdown (crases) caso a IA seja teimosa\nlet textoLimpo = respostaIA.replace(/```json/gi, '').replace(/```/gi, '').trim();\n\n// 3. Converte a string limpa em um objeto JSON real\nlet dadosConvertidos = JSON.parse(textoLimpo);\n\n// 4. Retorna o objeto puro para o n8n\nreturn dadosConvertidos.items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -560
+      ],
+      "id": "dbeeadd8-1895-44a4-9dd1-042cb2df2bd1",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "https://api.nal.usda.gov/fdc/v1/foods/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "page_size",
+              "value": "5"
+            },
+            {
+              "name": "fields",
+              "value": "fdcId,description,foodNutrients"
+            },
+            {
+              "name": "dataType",
+              "value": "=Foundation,SR Legacy"
+            },
+            {
+              "name": "query",
+              "value": "={{ $json.category_tag }}"
+            },
+            {
+              "name": "api_key",
+              "value": "usda_api_key"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        -544
+      ],
+      "id": "cee7aa84-9e3b-4ccc-843d-de49e0678a8e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{ $('Edit Fields').item.json.group_id }}",
+        "text": "={{ $json.mensagem_whatsapp }}",
+        "linkPreview": "={{ true }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        800,
+        -704
+      ],
+      "id": "c433f1c6-6be6-47ec-a6d4-b437cfafc318",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "u5iqZzeUa8OqRGsw",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- CONFIGURAÇÃO ---\nconst MAPA_NUTRIENTES = {\n    calorias:     { number: \"208\", unit: \"kcal\" },\n    proteinas:    { number: \"203\", unit: \"g\" },\n    gorduras:     { number: \"204\", unit: \"g\" },\n    carboidratos: { number: \"205\", unit: \"g\" }\n};\n\n// --- ENTRADA DE DADOS ---\nconst itemLoop = $('Loop Over Items').item.json;\n\nconst quantidadeInformada = Number(itemLoop.quantity_g) || 0;\nconst produtoNome = String(itemLoop.food_name_br || '').trim();\n\nif (!produtoNome) {\n    return { json: { erro: \"Nome do produto não informado\" } };\n}\n\nif (quantidadeInformada <= 0) {\n    return { json: { erro: \"Quantidade inválida (deve ser maior que 0)\" } };\n}\n\n// Acessa a resposta da API USDA\nconst responseData = items[0].json;\nconst foods = responseData.foods || [];\n\nif (!foods || foods.length === 0) {\n    return { json: { erro: \"Alimento não encontrado na base USDA\" } };\n}\n\n// --- SELEÇÃO DO MELHOR ALIMENTO ---\nfunction escolherMelhorAlimento(foodsList, nomeBuscado) {\n    const nomeLower = nomeBuscado.toLowerCase();\n\n    // Prioridade 1: descrição que contém o nome exato e não é produto processado\n    let candidato = foodsList.find(food => {\n        const desc = food.description.toLowerCase();\n        return desc.includes(nomeLower) &&\n               !desc.includes(\"product\") &&\n               !desc.includes(\"candy\") &&\n               !desc.includes(\"juice\") &&\n               !desc.includes(\"dried\") &&\n               !desc.includes(\"overripe\") &&   // evita banana muito madura com mais açúcar\n               !desc.includes(\"baby food\");\n    });\n\n    // Prioridade 2: qualquer descrição que contenha o nome\n    if (!candidato) {\n        candidato = foodsList.find(food => \n            food.description.toLowerCase().includes(nomeLower)\n        );\n    }\n\n    // Prioridade 3: pega o primeiro da lista\n    return candidato || foodsList[0];\n}\n\nconst alimentoSelecionado = escolherMelhorAlimento(foods, produtoNome);\nconst nutrientesDaAPI = alimentoSelecionado.foodNutrients || [];\n\nconsole.log(`✅ Alimento selecionado: ${alimentoSelecionado.description}`);\nconsole.log(`FDC ID: ${alimentoSelecionado.fdcId}`);\n\n// --- FUNÇÃO PARA CALCULAR NUTRIENTE ---\nfunction calcularMacro(numeroNutriente) {\n    const nutriente = nutrientesDaAPI.find(n => n.nutrientNumber === numeroNutriente);\n    \n    if (!nutriente || nutriente.value == null || isNaN(nutriente.value)) {\n        console.log(`⚠️ Nutriente ${numeroNutriente} não encontrado ou valor inválido`);\n        return 0;\n    }\n\n    // A API retorna valor por 100g → proporcional à quantidade informada\n    const valorCalculado = (nutriente.value / 100) * quantidadeInformada;\n    return parseFloat(valorCalculado.toFixed(2));\n}\n\n// --- SAÍDA ---\nreturn {\n    json: {\n        produto: produtoNome,\n        descricao_usda: alimentoSelecionado.description,   // importante para debug\n        quantidade_g: quantidadeInformada,\n        calorias: calcularMacro(MAPA_NUTRIENTES.calorias.number),\n        carboidratos: calcularMacro(MAPA_NUTRIENTES.carboidratos.number),\n        proteinas: calcularMacro(MAPA_NUTRIENTES.proteinas.number),\n        gorduras: calcularMacro(MAPA_NUTRIENTES.gorduras.number),\n    }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -544
+      ],
+      "id": "eb8740ce-016a-4924-b4cd-16d7c77223bd",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const itensCalculados = $input.all();\n\nlet totais = { kcal: 0, carbo: 0, prot: 0, gord: 0 };\nlet listaTexto = \"\";\n\nfor (const item of itensCalculados) {\n    const d = item.json;\n\n    totais.kcal += Number(d.calorias || 0);\n    totais.carbo += Number(d.carboidratos || 0);\n    totais.prot += Number(d.proteinas || 0);\n    totais.gord += Number(d.gorduras || 0);\n\n    listaTexto += `🔸 *${d.produto}* (${d.quantidade_g}g) - ${d.calorias} kcal\\n`;\n}\n\nlet mensagem = `🍽️ *Resumo da sua Refeição!* 🍽️\\n\\n${listaTexto}`;\nmensagem += `\\n📊 *TOTAL:*\\n`;\nmensagem += `🔥 ${totais.kcal.toFixed(2)} kcal\\n`;\nmensagem += `🍞 ${totais.carbo.toFixed(2)}g carbo\\n`;\nmensagem += `🥩 ${totais.prot.toFixed(2)}g proteína\\n`;\nmensagem += `🥑 ${totais.gord.toFixed(2)}g gordura\\n`;\n\nreturn [\n  {\n    json: {\n      mensagem_whatsapp: mensagem,\n      itens: itensCalculados.map(i => i.json),\n      totais\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -704
+      ],
+      "id": "e87ee37c-be26-4a36-a747-5372dc4bc559",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.media_url.replace(\"http://localhost:3000\", \"http://waha:3000\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -992,
+        -288
+      ],
+      "id": "b38de33e-4a71-47a7-b919-d68d9cf3ca20",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.payload._data.RawMessage.imageMessage.caption || null}}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Você é um extrator de dados dietéticos via visão computacional e texto. Sua função é analisar imagens de refeições (e/ou descrições textuais acompanhando a imagem) e converter o conteúdo estritamente em um formato JSON otimizado para busca na API USDA (FDC).\n\nVocê não deve responder com saudações ou explicações. Retorne APENAS o JSON válido.\n\nREGRAS DE ANÁLISE E EXTRAÇÃO:\n\nPrioridade de Input: - Se houver imagem e texto, use o texto para refinar a identificação da imagem (ex: a imagem mostra um bife, o texto diz \"patinho\").\n\nSe houver apenas imagem, identifique os alimentos e estime as porções visualmente.\n\nSe houver apenas texto, siga as estimativas padrão abaixo.\n\nEstimativa Pragmática de Peso (Visual ou Textual):\n\n\"um copo/xícara\" ou volume similar na imagem = 240g.\n\n\"uma colher de sopa\" = 15g | \"uma colher de chá\" = 5g.\n\n\"um prato\" (item principal como arroz/feijão) = 150g a 200g.\n\n\"uma unidade\" padrão (Ex: ovo = 50g, pão francês = 50g, banana = 120g).\n\nCarnes (tamanho da palma da mão) = 100g a 150g.\n\nTag de Categoria Específica (Foco USDA):\n\nA category_tag deve ser um termo de busca técnico em inglês para alta precisão no FDC.\n\nSeja específico: use \"grilled-chicken-breast\" em vez de \"chicken\", ou \"steamed-broccoli\" em vez de \"vegetables\".\n\nFORMATO DE SAÍDA OBRIGATÓRIO (JSON):\n\nJSON\n{\n  \"items\": [\n    {\n      \"quantity_g\": 0,\n      \"category_tag\": \"specific-search-term-in-english\"\n      \"food_name_br\": \"Nome do alimento em portugues\"\n    }\n  ]\n}\nEXEMPLOS DE COMPORTAMENTO:\n\nInput (Imagem de um prato de arroz e feijão + Texto: \"almoço de hoje\"):\nSaída: {\"items\": [{\"quantity_g\": 150, \"category_tag\": \"cooked-white-rice\", \"food_name_br\": \"arroz branco cozido\"}, {\"quantity_g\": 100, \"category_tag\": \"cooked-black-beans\", \"food_name_br\": \"Feijão preto cozido\"}]}\n\nInput (Imagem de um hambúrguer):\nSaída: {\"items\": [{\"quantity_g\": 250, \"category_tag\": \"cheeseburger-on-bun\", \"food_name_br\": \"Hamburguer\"}]}"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "messageType": "imageBinary"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -800,
+        -288
+      ],
+      "id": "bf013ac9-c6c2-4f26-b83e-02cab7d5f962",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        -80
+      ],
+      "id": "25bafe01-2816-424c-87c9-bf75114a1e6f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4LE2hPu9IU1dGLN1",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-3.5-turbo"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1088,
+        -592
+      ],
+      "id": "ad9dbdaf-6e89-4a36-b855-50ab4ca879cc",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "4LE2hPu9IU1dGLN1",
+          "name": "OpenAI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "31ba691a-b77b-4547-9ea8-5931baadcbda",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f06cc82f881f1b452537225f1ef057f37627d7ada0e26d9faef713cefebcceeb"
+  },
+  "id": "uAKlJqRyH0LFrc0R",
+  "tags": []
+}
