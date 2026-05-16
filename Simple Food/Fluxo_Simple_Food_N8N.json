@@ -10,12 +10,197 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -1824,
-        -288
+        -2208,
+        -272
       ],
       "id": "3711b50e-9533-4331-87f2-9d09ae70990b",
       "name": "Webhook",
       "webhookId": "b412d927-c2f2-49b9-97e9-5637d04cf743"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        0
+      ],
+      "id": "bfb1b821-ca8e-41be-a6b0-191e426dea8e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{ $('dados').item.json.group_id }}",
+        "text": "={{ $json.mensagem_whatsapp }}",
+        "linkPreview": "={{ true }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        112,
+        -720
+      ],
+      "id": "c433f1c6-6be6-47ec-a6d4-b437cfafc318",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "u5iqZzeUa8OqRGsw",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -832,
+        -112
+      ],
+      "id": "25bafe01-2816-424c-87c9-bf75114a1e6f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4LE2hPu9IU1dGLN1",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-3.5-turbo"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1008,
+        -560
+      ],
+      "id": "ad9dbdaf-6e89-4a36-b855-50ab4ca879cc",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "4LE2hPu9IU1dGLN1",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -720
+      ],
+      "id": "41fd8a8a-0e99-4067-aabc-ee66a02cfc2d",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1840,
+        -16
+      ],
+      "id": "ec3dda68-2373-467f-a1e6-e27eb2dd8fbe",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "usuarios",
+          "mode": "list",
+          "cachedResultName": "usuarios"
+        },
+        "limit": 1,
+        "where": {
+          "values": [
+            {
+              "column": "numero_whatsapp",
+              "value": "={{ $json.body.me.id.replace(\"@c.us\", \"\") }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2016,
+        -272
+      ],
+      "id": "1598f680-c6e9-4dc5-9139-7761a99a271c",
+      "name": "busca_usuario",
+      "credentials": {
+        "postgres": {
+          "id": "W7IgJdTph6dG7tNj",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "64e7fd98-594e-478f-aa8a-caaa597ae1d3",
+              "leftValue": "={{ $json.nome }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1824,
+        -272
+      ],
+      "id": "78f3f114-6425-4969-a49a-3febcf43eeab",
+      "name": "valida_usuario_existente"
     },
     {
       "parameters": {
@@ -24,31 +209,31 @@
             {
               "id": "2d8e42d7-e30f-4f10-a3ac-513229cbd2e1",
               "name": "group_id",
-              "value": "={{ $json.body.payload.from }}",
+              "value": "={{ $('Webhook').item.json.body.payload.from }}",
               "type": "string"
             },
             {
               "id": "6a3dec03-5fbf-44a5-b325-b0fe5d11a336",
               "name": "message",
-              "value": "={{ $json.body.payload._data.Message.conversation }}",
+              "value": "={{ $('Webhook').item.json.body.payload._data.Message.conversation }}",
               "type": "string"
             },
             {
               "id": "8f3897d9-af10-493f-9a8a-387f58eeaf59",
               "name": "hasMedia",
-              "value": "={{ $json.body.payload.hasMedia }}",
+              "value": "={{ $('Webhook').item.json.body.payload.hasMedia }}",
               "type": "boolean"
             },
             {
               "id": "2a7644e1-d49f-40e6-a859-6eb065d9e182",
               "name": "media_url",
-              "value": "={{ $json.body.payload.media.url }}",
+              "value": "={{ $('Webhook').item.json.body.payload.media.url }}",
               "type": "string"
             },
             {
               "id": "893462f2-b030-4d85-bba9-ad60e1a2ebef",
               "name": "whatssap_number",
-              "value": "={{ $json.body.me.id }}",
+              "value": "={{ $('Webhook').item.json.body.me.id }}",
               "type": "string"
             }
           ]
@@ -62,7 +247,7 @@
         -288
       ],
       "id": "66fca89b-02b6-4a7a-b58e-b45d706e9a36",
-      "name": "Edit Fields"
+      "name": "dados"
     },
     {
       "parameters": {
@@ -91,22 +276,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1408,
+        -1440,
         -288
       ],
       "id": "9a99b523-8818-4489-80b6-95a5e9562247",
-      "name": "If"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        -1184,
-        144
-      ],
-      "id": "bfb1b821-ca8e-41be-a6b0-191e426dea8e",
-      "name": "No Operation, do nothing"
+      "name": "valida_presenca_dados"
     },
     {
       "parameters": {
@@ -135,150 +309,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1200,
-        -384
+        -1216,
+        -304
       ],
       "id": "baf9d1a2-e168-41be-878c-df15e1e48fd9",
-      "name": "If1"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.message }}",
-        "messages": {
-          "messageValues": [
-            {
-              "message": "Você é um extrator de dados dietéticos automatizado. Sua função é analisar textos onde usuários descrevem o que consumiram e converter essas informações estritamente em um formato JSON otimizado para busca na API USDA (FDC).  Você não deve responder com saudações, conversas ou explicações. Retorne APENAS o JSON válido.  REGRAS DE EXTRAÇÃO E CONVERSÃO: 1. Medidas Imprecisas (Estimativa Pragmática): O usuário enviará medidas vagas. Você deve estimar o peso exato em gramas (g) usando os seguintes padrões:  \"um copo\" ou \"uma xícara\" = 240g.  \"uma colher de sopa\" = 15g | \"uma colher de chá\" = 5g.  \"um prato\" = 150g a 200g por item principal.  \"uma unidade\" (Ex: maçã = 150g, pão francês = 50g, ovo = 50g, banana = 120g).  \"ml\" = converta 1:1 para gramas (ex: 200ml = 200g).  Tag de Categoria Específica (Foco USDA): Para que a busca na API do USDA seja precisa, a category_tag deve ser altamente específica em inglês, incluindo o estado ou tipo do alimento se mencionado ou implícito.  Busca granular: Em vez de \"rice\", use \"brown-rice\", \"white-rice\" ou \"cooked-long-grain-rice\".  Carnes: Em vez de \"chicken\", use \"chicken-breast-boneless-skinless\" ou \"grilled-beef-steak\".  Processados: Use nomes técnicos em inglês (ex: \"whole-wheat-bread\", \"greek-yogurt-plain\").  FORMATO DE SAÍDA OBRIGATÓRIO (JSON): ```json {  \"items\": [  {  \"quantity_g\": 0,  \"category_tag\": \"specific-search-term-in-english\"  }, \"food_name_br\": \"Nome do alimento em portugues\"  ] }   **EXEMPLOS DE COMPORTAMENTO:** **Entrada:** \"Comi dois ovos cozidos e uma fatia de pão integral com uma colher de manteiga\"  **Saída:** ```json {    \"items\": [       {           \"quantity_g\": 100,           \"category_tag\": \"hard-boiled-eggs\", \"food_name_br\": \"ovos cozidos\"        },        {           \"quantity_g\": 30,           \"category_tag\": \"whole-wheat-bread, \"food_name_br\": \"pao\"        },        {           \"quantity_g\": 15,           \"category_tag\": \"unsalted-butter\"        }     ]  }"
-            }
-          ]
-        },
-        "batching": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1.9,
-      "position": [
-        -1088,
-        -800
-      ],
-      "id": "88cbec81-675a-4bc5-b26d-48ae951d245c",
-      "name": "Basic LLM Chain"
-    },
-    {
-      "parameters": {
-        "batchSize": "=1",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        192,
-        -560
-      ],
-      "id": "6e035b00-4a91-48f7-8209-04374826e8c7",
-      "name": "Loop Over Items"
-    },
-    {
-      "parameters": {
-        "jsCode": "// 1. Pegue o texto que o OpenRouter gerou. \n// ATENÇÃO: Mude o \".text\" abaixo para o nome exato do campo que o seu nó do OpenRouter está retornando (pode ser .message ou .content)\nlet respostaIA = $input.item.json.text; \n\n// 2. Limpa qualquer formatação de markdown (crases) caso a IA seja teimosa\nlet textoLimpo = respostaIA.replace(/```json/gi, '').replace(/```/gi, '').trim();\n\n// 3. Converte a string limpa em um objeto JSON real\nlet dadosConvertidos = JSON.parse(textoLimpo);\n\n// 4. Retorna o objeto puro para o n8n\nreturn dadosConvertidos.items;"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -64,
-        -560
-      ],
-      "id": "dbeeadd8-1895-44a4-9dd1-042cb2df2bd1",
-      "name": "Code in JavaScript"
-    },
-    {
-      "parameters": {
-        "url": "https://api.nal.usda.gov/fdc/v1/foods/search",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "page_size",
-              "value": "5"
-            },
-            {
-              "name": "fields",
-              "value": "fdcId,description,foodNutrients"
-            },
-            {
-              "name": "dataType",
-              "value": "=Foundation,SR Legacy"
-            },
-            {
-              "name": "query",
-              "value": "={{ $json.category_tag }}"
-            },
-            {
-              "name": "api_key",
-              "value": "usda_api_key"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        448,
-        -544
-      ],
-      "id": "cee7aa84-9e3b-4ccc-843d-de49e0678a8e",
-      "name": "HTTP Request"
-    },
-    {
-      "parameters": {
-        "resource": "Chatting",
-        "operation": "Send Text",
-        "session": "=default",
-        "chatId": "={{ $('Edit Fields').item.json.group_id }}",
-        "text": "={{ $json.mensagem_whatsapp }}",
-        "linkPreview": "={{ true }}",
-        "requestOptions": {}
-      },
-      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
-      "typeVersion": 202502,
-      "position": [
-        800,
-        -704
-      ],
-      "id": "c433f1c6-6be6-47ec-a6d4-b437cfafc318",
-      "name": "Send a text message",
-      "credentials": {
-        "wahaApi": {
-          "id": "u5iqZzeUa8OqRGsw",
-          "name": "WAHA account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// --- CONFIGURAÇÃO ---\nconst MAPA_NUTRIENTES = {\n    calorias:     { number: \"208\", unit: \"kcal\" },\n    proteinas:    { number: \"203\", unit: \"g\" },\n    gorduras:     { number: \"204\", unit: \"g\" },\n    carboidratos: { number: \"205\", unit: \"g\" }\n};\n\n// --- ENTRADA DE DADOS ---\nconst itemLoop = $('Loop Over Items').item.json;\n\nconst quantidadeInformada = Number(itemLoop.quantity_g) || 0;\nconst produtoNome = String(itemLoop.food_name_br || '').trim();\n\nif (!produtoNome) {\n    return { json: { erro: \"Nome do produto não informado\" } };\n}\n\nif (quantidadeInformada <= 0) {\n    return { json: { erro: \"Quantidade inválida (deve ser maior que 0)\" } };\n}\n\n// Acessa a resposta da API USDA\nconst responseData = items[0].json;\nconst foods = responseData.foods || [];\n\nif (!foods || foods.length === 0) {\n    return { json: { erro: \"Alimento não encontrado na base USDA\" } };\n}\n\n// --- SELEÇÃO DO MELHOR ALIMENTO ---\nfunction escolherMelhorAlimento(foodsList, nomeBuscado) {\n    const nomeLower = nomeBuscado.toLowerCase();\n\n    // Prioridade 1: descrição que contém o nome exato e não é produto processado\n    let candidato = foodsList.find(food => {\n        const desc = food.description.toLowerCase();\n        return desc.includes(nomeLower) &&\n               !desc.includes(\"product\") &&\n               !desc.includes(\"candy\") &&\n               !desc.includes(\"juice\") &&\n               !desc.includes(\"dried\") &&\n               !desc.includes(\"overripe\") &&   // evita banana muito madura com mais açúcar\n               !desc.includes(\"baby food\");\n    });\n\n    // Prioridade 2: qualquer descrição que contenha o nome\n    if (!candidato) {\n        candidato = foodsList.find(food => \n            food.description.toLowerCase().includes(nomeLower)\n        );\n    }\n\n    // Prioridade 3: pega o primeiro da lista\n    return candidato || foodsList[0];\n}\n\nconst alimentoSelecionado = escolherMelhorAlimento(foods, produtoNome);\nconst nutrientesDaAPI = alimentoSelecionado.foodNutrients || [];\n\nconsole.log(`✅ Alimento selecionado: ${alimentoSelecionado.description}`);\nconsole.log(`FDC ID: ${alimentoSelecionado.fdcId}`);\n\n// --- FUNÇÃO PARA CALCULAR NUTRIENTE ---\nfunction calcularMacro(numeroNutriente) {\n    const nutriente = nutrientesDaAPI.find(n => n.nutrientNumber === numeroNutriente);\n    \n    if (!nutriente || nutriente.value == null || isNaN(nutriente.value)) {\n        console.log(`⚠️ Nutriente ${numeroNutriente} não encontrado ou valor inválido`);\n        return 0;\n    }\n\n    // A API retorna valor por 100g → proporcional à quantidade informada\n    const valorCalculado = (nutriente.value / 100) * quantidadeInformada;\n    return parseFloat(valorCalculado.toFixed(2));\n}\n\n// --- SAÍDA ---\nreturn {\n    json: {\n        produto: produtoNome,\n        descricao_usda: alimentoSelecionado.description,   // importante para debug\n        quantidade_g: quantidadeInformada,\n        calorias: calcularMacro(MAPA_NUTRIENTES.calorias.number),\n        carboidratos: calcularMacro(MAPA_NUTRIENTES.carboidratos.number),\n        proteinas: calcularMacro(MAPA_NUTRIENTES.proteinas.number),\n        gorduras: calcularMacro(MAPA_NUTRIENTES.gorduras.number),\n    }\n};"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        688,
-        -544
-      ],
-      "id": "eb8740ce-016a-4924-b4cd-16d7c77223bd",
-      "name": "Code in JavaScript1"
-    },
-    {
-      "parameters": {
-        "jsCode": "const itensCalculados = $input.all();\n\nlet totais = { kcal: 0, carbo: 0, prot: 0, gord: 0 };\nlet listaTexto = \"\";\n\nfor (const item of itensCalculados) {\n    const d = item.json;\n\n    totais.kcal += Number(d.calorias || 0);\n    totais.carbo += Number(d.carboidratos || 0);\n    totais.prot += Number(d.proteinas || 0);\n    totais.gord += Number(d.gorduras || 0);\n\n    listaTexto += `🔸 *${d.produto}* (${d.quantidade_g}g) - ${d.calorias} kcal\\n`;\n}\n\nlet mensagem = `🍽️ *Resumo da sua Refeição!* 🍽️\\n\\n${listaTexto}`;\nmensagem += `\\n📊 *TOTAL:*\\n`;\nmensagem += `🔥 ${totais.kcal.toFixed(2)} kcal\\n`;\nmensagem += `🍞 ${totais.carbo.toFixed(2)}g carbo\\n`;\nmensagem += `🥩 ${totais.prot.toFixed(2)}g proteína\\n`;\nmensagem += `🥑 ${totais.gord.toFixed(2)}g gordura\\n`;\n\nreturn [\n  {\n    json: {\n      mensagem_whatsapp: mensagem,\n      itens: itensCalculados.map(i => i.json),\n      totais\n    }\n  }\n];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        384,
-        -704
-      ],
-      "id": "e87ee37c-be26-4a36-a747-5372dc4bc559",
-      "name": "Code in JavaScript2"
+      "name": "valida_texto_ou_imagem"
     },
     {
       "parameters": {
@@ -288,11 +323,33 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -992,
+        -1040,
         -288
       ],
       "id": "b38de33e-4a71-47a7-b919-d68d9cf3ca20",
-      "name": "HTTP Request1"
+      "name": "busca_imagem"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Você é um extrator de dados dietéticos automatizado e implacável. Sua única função é analisar textos descritivos de consumo alimentar em português e convertê-los estritamente em um objeto JSON válido, otimizado para busca na API e em bancos de dados nutricionais.\n\n1. REGRAS DE COMPORTAMENTO ESTREITO\nZERO CONVERSA: Não inclua saudações, explicações, notas de rodapé ou qualquer formatação markdown fora do bloco de código JSON.\n\nSAÍDA ESTRITA: O resultado deve ser APENAS um JSON perfeitamente válido e parseável.\n\n2. REGRAS DE INFERÊNCIA DE MEDIDAS (g)\nMuitos usuários fornecerão medidas vagas ou nenhuma medida. Você deve converter tudo para gramas (quantity_g) usando a seguinte hierarquia de estimativa pragmática:\n\nOmissão Total (Ex: \"comi arroz e frango\"): Se não houver medida alguma, assuma porções padrão de um prato comum:\n\nProteína principal: 120g\n\nCarboidrato/Grãos (Arroz, Massa, Batata): 100g a 150g\n\nLeguminosas (Feijão, Lentilha): 80g\n\nVegetais/Salada: 80g\n\nMolhos/Gorduras adicionais: 15g\n\nVolumes Padrão: \"1 copo\" ou \"1 xícara\" = 240g (líquidos) ou 150g (sólidos/grãos); \"1 ml\" = converta 1:1 para gramas (ex: 200ml = 200g).\n\nUtensílios: \"1 colher de sopa\" = 15g; \"1 colher de chá\" = 5g; \"1 escumadeira/concha\" = 50g a 80g.\n\nUnidades de Frutas/Ovos: \"1 ovo\" = 50g; \"1 maçã/laranja/pera\" = 150g; \"1 banana\" = 120g.\n\nUnidades de Panificação e Carnes: \"1 pão francês/hambúrguer\" = 50g; \"1 fatia de pão de forma\" = 30g; \"1 bife/filé médio\" = 120g.\n\nRefeição Genérica (\"um prato de...\"): Assuma um total de 300g a 400g, dividindo proporcionalmente entre os ingredientes mencionados.\n\n3. TAGS ESPECÍFICAS PARA A API USDA\nA category_tag deve ser uma string de busca cirúrgica e rigorosa em INGLÊS.\n\nInclua o método de preparo ou estado do alimento (ex: \"cooked\", \"raw\", \"roasted\", \"grilled\", \"boiled\").\n\nInclua especificações de cortes para carnes (ex: \"chicken-breast-boneless-skinless\", \"beef-steak-grilled\", \"ground-beef-cooked\").\n\nPara alimentos processados, use nomenclatura técnica (ex: \"whole-wheat-bread\", \"greek-yogurt-plain\", \"unsalted-butter\").\n\nFormate a tag com hífens separando as palavras.\n\n4. FOOD_NAME_BR (PADRÃO TACO)\nVocê é um tradutor nutricional. O seu objetivo é transformar o texto do usuário em palavras-chave curtas, cruas e diretas, otimizadas para busca SQL (Tabela TACO brasileira).\n\nREGRAS RÍGIDAS:\n\nNUNCA use adjetivos irrelevantes (suculento, gostoso, soltinho).\n\nREMOVA marcas, quantidades e plural do nome do alimento.\n\nDeduza o método de preparo pelo contexto do texto (ex: se for uma dieta comum, assuma grelhado ou cozido).\n\nFormate no padrão: [Alimento base], [Corte/Tipo], [Preparo].\n\nREGRAS DE NOMENCLATURA (PADRÃO TACO BRASILEIRA)\nVocê deve formatar o campo \"food_name_br\" EXATAMENTE como os alimentos estão cadastrados na tabela nutricional TACO. Siga estas 3 regras de ouro:\n\nFRUTAS E VEGETAIS NATURAIS:\nNUNCA retorne apenas o nome da fruta/vegetal, senão o sistema confundirá com refrigerantes ou bolos. SEMPRE adicione a variedade e a palavra \"cru\" ou \"crua\".\n❌ Errado: \"laranja\", \"banana\", \"manga\", \"alface\"\n✅ Correto: \"laranja, pera, crua\", \"banana, prata, crua\", \"manga, palmer, crua\", \"alface, crua\"\n\nCARNES E OVOS:\nSEMPRE especifique o corte e o método de preparo (grelhado, cozido, frito).\n❌ Errado: \"frango\", \"carne\", \"ovo\", \"porco\"\n✅ Correto: \"frango, peito, sem pele, grelhado\", \"carne, bovina, patinho, grelhado\", \"ovo, de galinha, cozido\"\n\nARROZ E FEIJÃO:\nEspecifique o tipo e se está cozido.\n❌ Errado: \"arroz\", \"feijão\"\n✅ Correto: \"arroz, tipo 1, cozido\", \"feijão, carioca, cozido\"\n\n5. CATEGORIA DO ALIMENTO\nVocê deve classificar CADA alimento em EXATAMENTE UMA das categorias oficiais abaixo. A string deve ser idêntica (copiada e colada) à lista a seguir, sem invenções:\n\nFrutas e derivados\n\nOvos e derivados\n\nGorduras e óleos\n\nProdutos açucarados\n\nVerduras, hortaliças e derivados\n\nLeguminosas e derivados\n\nMiscelâneas\n\nCarnes e derivados\n\nBebidas (alcoólicas e não alcoólicas)\n\nOutros alimentos industrializados\n\nNozes e sementes\n\nCereais e derivados\n\nLeite e derivados\n\nPescados e frutos do mar\n\nAlimentos preparados\n\n6. ESQUEMA JSON OBRIGATÓRIO\nJSON\n{\n  \"items\": [\n    {\n      \"food_name_br\": \"nome exato do alimento em português no padrão TACO\",\n      \"quantity_g\": 0,\n      \"category_tag\": \"english-specific-search-tag\",\n      \"categoria_taco\": \"Categoria Exata da Lista Oficial\"\n    }\n  ]\n}\nEXEMPLO DE EXECUÇÃO PERFEITA\nEntrada: \"No almoço comi arroz, feijão e um filé de frango. De sobremesa uma fatia de pão integral com uma colher de chá de mel.\"\n\nSaída:\n\nJSON\n{\n  \"items\": [\n    {\n      \"food_name_br\": \"arroz, tipo 1, cozido\",\n      \"quantity_g\": 100,\n      \"category_tag\": \"white-rice-cooked\",\n      \"categoria_taco\": \"Cereais e derivados\"\n    },\n    {\n      \"food_name_br\": \"feijão, preto, cozido\",\n      \"quantity_g\": 80,\n      \"category_tag\": \"black-beans-cooked\",\n      \"categoria_taco\": \"Leguminosas e derivados\"\n    },\n    {\n      \"food_name_br\": \"frango, peito, sem pele, grelhado\",\n      \"quantity_g\": 120,\n      \"category_tag\": \"chicken-breast-grilled-boneless\",\n      \"categoria_taco\": \"Carnes e derivados\"\n    },\n    {\n      \"food_name_br\": \"pão, de trigo, integral\",\n      \"quantity_g\": 30,\n      \"category_tag\": \"whole-wheat-bread\",\n      \"categoria_taco\": \"Cereais e derivados\"\n    },\n    {\n      \"food_name_br\": \"mel, de abelha\",\n      \"quantity_g\": 5,\n      \"category_tag\": \"honey-raw\",\n      \"categoria_taco\": \"Produtos açucarados\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -1024,
+        -720
+      ],
+      "id": "88cbec81-675a-4bc5-b26d-48ae951d245c",
+      "name": "instruction_texto"
     },
     {
       "parameters": {
@@ -301,7 +358,7 @@
         "messages": {
           "messageValues": [
             {
-              "message": "Você é um extrator de dados dietéticos via visão computacional e texto. Sua função é analisar imagens de refeições (e/ou descrições textuais acompanhando a imagem) e converter o conteúdo estritamente em um formato JSON otimizado para busca na API USDA (FDC).\n\nVocê não deve responder com saudações ou explicações. Retorne APENAS o JSON válido.\n\nREGRAS DE ANÁLISE E EXTRAÇÃO:\n\nPrioridade de Input: - Se houver imagem e texto, use o texto para refinar a identificação da imagem (ex: a imagem mostra um bife, o texto diz \"patinho\").\n\nSe houver apenas imagem, identifique os alimentos e estime as porções visualmente.\n\nSe houver apenas texto, siga as estimativas padrão abaixo.\n\nEstimativa Pragmática de Peso (Visual ou Textual):\n\n\"um copo/xícara\" ou volume similar na imagem = 240g.\n\n\"uma colher de sopa\" = 15g | \"uma colher de chá\" = 5g.\n\n\"um prato\" (item principal como arroz/feijão) = 150g a 200g.\n\n\"uma unidade\" padrão (Ex: ovo = 50g, pão francês = 50g, banana = 120g).\n\nCarnes (tamanho da palma da mão) = 100g a 150g.\n\nTag de Categoria Específica (Foco USDA):\n\nA category_tag deve ser um termo de busca técnico em inglês para alta precisão no FDC.\n\nSeja específico: use \"grilled-chicken-breast\" em vez de \"chicken\", ou \"steamed-broccoli\" em vez de \"vegetables\".\n\nFORMATO DE SAÍDA OBRIGATÓRIO (JSON):\n\nJSON\n{\n  \"items\": [\n    {\n      \"quantity_g\": 0,\n      \"category_tag\": \"specific-search-term-in-english\"\n      \"food_name_br\": \"Nome do alimento em portugues\"\n    }\n  ]\n}\nEXEMPLOS DE COMPORTAMENTO:\n\nInput (Imagem de um prato de arroz e feijão + Texto: \"almoço de hoje\"):\nSaída: {\"items\": [{\"quantity_g\": 150, \"category_tag\": \"cooked-white-rice\", \"food_name_br\": \"arroz branco cozido\"}, {\"quantity_g\": 100, \"category_tag\": \"cooked-black-beans\", \"food_name_br\": \"Feijão preto cozido\"}]}\n\nInput (Imagem de um hambúrguer):\nSaída: {\"items\": [{\"quantity_g\": 250, \"category_tag\": \"cheeseburger-on-bun\", \"food_name_br\": \"Hamburguer\"}]}"
+              "message": "Você é um extrator de dados dietéticos visual automatizado e implacável. Sua função é analisar imagens de refeições (fotos) — acompanhadas ou não de uma descrição em texto — e converter os alimentos identificados estritamente em um objeto JSON válido, otimizado para busca na API e em bancos de dados nutricionais.\n\n1. REGRAS DE COMPORTAMENTO ESTREITO\nZERO CONVERSA: Não inclua saudações, explicações sobre a imagem, notas de rodapé ou qualquer formatação markdown fora do bloco de código JSON.\n\nSAÍDA ESTRITA: O resultado deve ser APENAS um JSON perfeitamente válido e parseável.\n\n2. ANÁLISE VISUAL E INFERÊNCIA DE MEDIDAS (g)\nComo a imagem não possui balança, você deve estimar o peso em gramas (quantity_g) fazendo o cálculo de volume visual (assumindo pratos e copos de tamanho padrão) e a densidade do alimento:\n\nCarnes/Proteínas (Densidade alta): Um pedaço do tamanho da palma de uma mão ou um baralho equivale a aproximadamente 100g-120g.\n\nCarboidratos/Grãos (Densidade média): Uma porção do tamanho de um punho fechado (arroz, massa, batata) tem cerca de 100g-150g.\n\nFolhas/Saladas (Densidade baixa): Ocupam muito volume visual, mas pesam pouco. Meio prato de salada de folhas pesa entre 50g-80g.\n\nLíquidos/Copos: Um copo padrão cheio na foto tem cerca de 240g (ou 240ml). Uma lata tem 350g.\n\nIngredientes Ocultos/Visuais: Se o alimento apresenta brilho evidente de óleo/manteiga (ex: ovo frito, vegetais salteados, bife grelhado), adicione uma entrada de 10g a 15g de óleo ou manteiga usada no preparo.\n\n3. SINERGIA ENTRE IMAGEM E TEXTO (CONTEXTO OPCIONAL)\nO usuário pode enviar um texto junto com a foto. Use a seguinte regra de prioridade:\n\nSe o texto fornecer medidas exatas (ex: \"tem 200g de arroz aqui\"), o TEXTO substitui a estimativa visual.\n\nSe o texto for vago (ex: \"meu almoço de hoje\"), use o texto para confirmar o NOME do prato (para não confundir, por exemplo, purê de batata com polenta na imagem) e faça a estimativa de peso puramente pela VISÃO.\n\nSe não houver texto, deduza tudo 100% da imagem.\n\n4. TAGS ESPECÍFICAS PARA A API USDA\nA category_tag deve ser uma string de busca cirúrgica em INGLÊS baseada no aspecto visual e/ou descrito.\n\nAvalie o estado do alimento pela foto: está cru (\"raw\")? Grelhado (\"grilled\")? Frito (\"fried\")? Cozido (\"boiled\")?\n\nPara alimentos processados identificáveis por embalagens na foto, use nomenclatura técnica genérica em inglês.\n\nFormate a tag com hífens separando as palavras.\n\n5. FOOD_NAME_BR (PADRÃO TACO)\nVocê é um tradutor nutricional. O seu objetivo é transformar o texto do usuário ou o visual da imagem em palavras-chave curtas, cruas e diretas, otimizadas para busca SQL (Tabela TACO brasileira).\n\nREGRAS RÍGIDAS:\n\nNUNCA descreva a imagem ou use adjetivos (suculento, gostoso, soltinho).\n\nREMOVA marcas, quantidades e plural do nome do alimento.\n\nUse a imagem APENAS para deduzir o corte ou o método de preparo (ex: se na foto parece frito, adicione \"frito\").\n\nFormate no padrão: [Alimento base], [Corte/Tipo], [Preparo].\n\nREGRAS DE NOMENCLATURA (PADRÃO TACO BRASILEIRA)\nVocê deve formatar o campo \"food_name_br\" EXATAMENTE como os alimentos estão cadastrados na tabela nutricional TACO. Siga estas 3 regras de ouro:\n\nFRUTAS E VEGETAIS NATURAIS:\nNUNCA retorne apenas o nome da fruta/vegetal, senão o sistema confundirá com refrigerantes ou bolos. SEMPRE adicione a variedade e a palavra \"cru\" ou \"crua\".\n❌ Errado: \"laranja\", \"banana\", \"manga\", \"alface\"\n✅ Correto: \"laranja, pera, crua\", \"banana, prata, crua\", \"manga, palmer, crua\", \"alface, crua\"\n\nCARNES E OVOS:\nSEMPRE especifique o corte e o método de preparo (grelhado, cozido, frito).\n❌ Errado: \"frango\", \"carne\", \"ovo\", \"porco\"\n✅ Correto: \"frango, peito, sem pele, grelhado\", \"carne, bovina, patinho, grelhado\", \"ovo, de galinha, cozido\"\n\nARROZ E FEIJÃO:\nEspecifique o tipo e se está cozido.\n❌ Errado: \"arroz\", \"feijão\"\n✅ Correto: \"arroz, tipo 1, cozido\", \"feijão, carioca, cozido\"\n\nSe o usuário mandar uma foto, use-a apenas para tentar identificar o tipo (ex: se é banana prata ou nanica, se o frango é grelhado ou frito). NUNCA descreva a foto, foque apenas em gerar as tags exatas acima.\n\n6. CATEGORIA DO ALIMENTO (NOVO)\nVocê deve classificar CADA alimento em EXATAMENTE UMA das categorias oficiais abaixo. A string deve ser idêntica (copiada e colada) à lista a seguir, sem invenções:\n\nFrutas e derivados\n\nOvos e derivados\n\nGorduras e óleos\n\nProdutos açucarados\n\nVerduras, hortaliças e derivados\n\nLeguminosas e derivados\n\nMiscelâneas\n\nCarnes e derivados\n\nBebidas (alcoólicas e não alcoólicas)\n\nOutros alimentos industrializados\n\nNozes e sementes\n\nCereais e derivados\n\nLeite e derivados\n\nPescados e frutos do mar\n\nAlimentos preparados\n\n7. ESQUEMA JSON OBRIGATÓRIO\nJSON\n{\n  \"items\": [\n    {\n      \"food_name_br\": \"nome exato do alimento em português no padrão TACO\",\n      \"quantity_g\": 0,\n      \"category_tag\": \"english-specific-search-tag\",\n      \"categoria_taco\": \"Categoria Exata da Lista Oficial\"\n    }\n  ]\n}\nEXEMPLO DE EXECUÇÃO PERFEITA\nContexto de Entrada:\n[IMAGEM: Um prato com 2 colheres de servir de arroz, uma concha de feijão, um bife grelhado pequeno com brilho de óleo, e um copo de suco de laranja ao lado.]\nTexto opcional do usuário: \"Almoço rápido, o suco é natural\"\n\nSaída:\n\nJSON\n{\n  \"items\": [\n    {\n      \"food_name_br\": \"arroz, tipo 1, cozido\",\n      \"quantity_g\": 120,\n      \"category_tag\": \"white-rice-cooked\",\n      \"categoria_taco\": \"Cereais e derivados\"\n    },\n    {\n      \"food_name_br\": \"feijão, carioca, cozido\",\n      \"quantity_g\": 80,\n      \"category_tag\": \"pinto-beans-cooked\",\n      \"categoria_taco\": \"Leguminosas e derivados\"\n    },\n    {\n      \"food_name_br\": \"carne, bovina, contrafilé, grelhado\",\n      \"quantity_g\": 120,\n      \"category_tag\": \"beef-steak-grilled\",\n      \"categoria_taco\": \"Carnes e derivados\"\n    },\n    {\n      \"food_name_br\": \"óleo, de soja\",\n      \"quantity_g\": 10,\n      \"category_tag\": \"soybean-oil\",\n      \"categoria_taco\": \"Gorduras e óleos\"\n    },\n    {\n      \"food_name_br\": \"suco, laranja, cru\",\n      \"quantity_g\": 240,\n      \"category_tag\": \"orange-juice-raw\",\n      \"categoria_taco\": \"Bebidas (alcoólicas e não alcoólicas)\"\n    }\n  ]\n}"
             },
             {
               "type": "HumanMessagePromptTemplate",
@@ -314,63 +371,61 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        -800,
+        -832,
         -288
       ],
       "id": "bf013ac9-c6c2-4f26-b83e-02cab7d5f962",
-      "name": "Basic LLM Chain1"
+      "name": "instruction_foto_texto"
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-4o",
-          "mode": "list",
-          "cachedResultName": "gpt-4o"
-        },
-        "builtInTools": {},
-        "options": {}
+        "jsCode": "// 1. Pegue o texto que o OpenRouter gerou. \n// ATENÇÃO: Mude o \".text\" abaixo para o nome exato do campo que o seu nó do OpenRouter está retornando (pode ser .message ou .content)\nlet respostaIA = $input.item.json.text; \n\n// 2. Limpa qualquer formatação de markdown (crases) caso a IA seja teimosa\nlet textoLimpo = respostaIA.replace(/```json/gi, '').replace(/```/gi, '').trim();\n\n// 3. Converte a string limpa em um objeto JSON real\nlet dadosConvertidos = JSON.parse(textoLimpo);\n\n// 4. Retorna o objeto puro para o n8n\nreturn dadosConvertidos.items;"
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        -800,
-        -80
+        -560,
+        -720
       ],
-      "id": "25bafe01-2816-424c-87c9-bf75114a1e6f",
-      "name": "OpenAI Chat Model",
+      "id": "dbeeadd8-1895-44a4-9dd1-042cb2df2bd1",
+      "name": "converto_json"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH alimentos_json AS (\n    -- O $1 indica que o n8n vai injetar o texto de forma segura aqui\n    SELECT * FROM jsonb_to_recordset($1::jsonb) AS (\n        food_name_br text,\n        quantity_g numeric\n    )\n)\nSELECT \n    busca.descri_o_dos_alimentos,\n    busca.n_mero_do_alimento,\n    ROUND(((busca.energia_kcal * a.quantity_g) / 100)::numeric, 2) AS calorias_kcal,\n    ROUND(((busca.prote_na_g  * a.quantity_g) / 100)::numeric, 2) AS proteina_g,\n    ROUND(((busca.carboidrato_g * a.quantity_g) / 100)::numeric, 2) AS carboidratos_g,\n    ROUND(((busca.lip_deos_g  * a.quantity_g) / 100)::numeric, 2) AS gorduras_g\nFROM alimentos_json a\nLEFT JOIN LATERAL (\n    SELECT * FROM tabela_nutricional t \n    ORDER BY \n        translate(lower(t.descri_o_dos_alimentos), 'áàâãäéèêëíìîïóòôõöúùûüç', 'aaaaaeeeeiiiiooooouuuuc') \n        <-> \n        translate(lower(TRIM(a.food_name_br)), 'áàâãäéèêëíìîïóòôõöúùûüç', 'aaaaaeeeeiiiiooooouuuuc')\n    LIMIT 1 \n) busca ON true;",
+        "options": {
+          "queryReplacement": "={{ JSON.stringify($input.all().map(item => item.json)) }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -304,
+        -720
+      ],
+      "id": "fafbc46d-3f2f-4732-a97e-6d9c9f8338df",
+      "name": "busca_calcula_alimentos",
+      "executeOnce": true,
       "credentials": {
-        "openAiApi": {
-          "id": "4LE2hPu9IU1dGLN1",
-          "name": "OpenAI account"
+        "postgres": {
+          "id": "W7IgJdTph6dG7tNj",
+          "name": "Postgres account"
         }
       }
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-3.5-turbo",
-          "mode": "list",
-          "cachedResultName": "gpt-3.5-turbo"
-        },
-        "builtInTools": {},
-        "options": {}
+        "jsCode": "// Inicializamos as variáveis para somar os totais\nlet totalCalorias = 0;\nlet totalProteinas = 0;\nlet totalCarboidratos = 0;\nlet totalGorduras = 0;\n\n// Variável para guardar a lista de alimentos formatada\nlet detalhesAlimentos = \"\";\n\n// Pegamos todos os itens devolvidos pelo nó do PostgreSQL\nconst itens = $input.all();\n\n// O loop varre cada alimento retornado pelo banco\nfor (const item of itens) {\n    const dados = item.json;\n\n    // Se por acaso a IA inventar um alimento que não existe na TACO e voltar nulo\n    if (!dados.descri_o_dos_alimentos) {\n        detalhesAlimentos += `❓ _Alimento não identificado_\\n`;\n        continue;\n    }\n\n    // Limpa um pouco o nome para não ficar gigante (opcional, pega até a primeira vírgula)\n    // Ex: \"Frango, peito, sem pele\" vira \"Frango\" - Se quiser o nome completo, troque para: const nome = dados.descri_o_dos_alimentos;\n    const nome = dados.descri_o_dos_alimentos; \n\n    // Garantimos que são números e tratamos casos nulos\n    const cal = Number(dados.calorias_kcal) || 0;\n    const prot = Number(dados.proteina_g) || 0;\n    const carb = Number(dados.carboidratos_g) || 0;\n    const gord = Number(dados.gorduras_g) || 0;\n\n    // Somamos aos totais\n    totalCalorias += cal;\n    totalProteinas += prot;\n    totalCarboidratos += carb;\n    totalGorduras += gord;\n\n    // Montamos a linha deste alimento com formatação do WhatsApp (*negrito*, _itálico_)\n    detalhesAlimentos += `🔹 *${nome.trim()}*: ${cal.toFixed(1)} kcal\\n`;\n    detalhesAlimentos += `    _P: ${prot.toFixed(1)}g | C: ${carb.toFixed(1)}g | G: ${gord.toFixed(1)}g_\\n\\n`;\n}\n\n// Montamos a mensagem final juntando tudo\nlet mensagemFinal = `🍽️ *Resumo da sua Refeição* 🍽️\\n\\n`;\nmensagemFinal += `*O que você consumiu:*\\n${detalhesAlimentos}`;\nmensagemFinal += `━━━━━━━━━━━━━━━━━\\n`;\nmensagemFinal += `📊 *TOTAIS DA REFEIÇÃO*\\n`;\nmensagemFinal += `🔥 Calorias: *${totalCalorias.toFixed(1)} kcal*\\n`;\nmensagemFinal += `🍗 Proteínas: *${totalProteinas.toFixed(1)}g*\\n`;\nmensagemFinal += `🍞 Carboidratos: *${totalCarboidratos.toFixed(1)}g*\\n`;\nmensagemFinal += `🥑 Gorduras: *${totalGorduras.toFixed(1)}g*\\n`;\n\n// Retornamos a mensagem pronta dentro de uma propriedade chamada \"mensagem_whatsapp\"\nreturn [{ \n    json: { \n        mensagem_whatsapp: mensagemFinal,\n        dados_brutos: {\n            kcal: totalCalorias,\n            p: totalProteinas,\n            c: totalCarboidratos,\n            g: totalGorduras\n        }\n    } \n}];"
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        -1088,
-        -592
+        -96,
+        -720
       ],
-      "id": "ad9dbdaf-6e89-4a36-b855-50ab4ca879cc",
-      "name": "OpenAI Chat Model1",
-      "credentials": {
-        "openAiApi": {
-          "id": "4LE2hPu9IU1dGLN1",
-          "name": "OpenAI account"
-        }
-      }
+      "id": "a93d0215-4429-4776-b057-57ff4dc4e92c",
+      "name": "monta_mensagem"
     }
   ],
   "pinData": {},
@@ -379,29 +434,91 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "busca_usuario",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "instruction_foto_texto",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "instruction_texto",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
       "main": [
         [
           {
-            "node": "If",
+            "node": "No Operation, do nothing1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If": {
+    "busca_usuario": {
       "main": [
         [
           {
-            "node": "If1",
+            "node": "valida_usuario_existente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valida_usuario_existente": {
+      "main": [
+        [
+          {
+            "node": "dados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dados": {
+      "main": [
+        [
+          {
+            "node": "valida_presenca_dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valida_presenca_dados": {
+      "main": [
+        [
+          {
+            "node": "valida_texto_ou_imagem",
             "type": "main",
             "index": 0
           }
@@ -415,135 +532,84 @@
         ]
       ]
     },
-    "If1": {
+    "valida_texto_ou_imagem": {
       "main": [
         [
           {
-            "node": "Basic LLM Chain",
+            "node": "instruction_texto",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "HTTP Request1",
+            "node": "busca_imagem",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Basic LLM Chain": {
+    "busca_imagem": {
       "main": [
         [
           {
-            "node": "Code in JavaScript",
+            "node": "instruction_foto_texto",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Loop Over Items": {
+    "instruction_texto": {
       "main": [
         [
           {
-            "node": "Code in JavaScript2",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "HTTP Request",
+            "node": "converto_json",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code in JavaScript": {
+    "instruction_foto_texto": {
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "converto_json",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "HTTP Request": {
+    "converto_json": {
       "main": [
         [
           {
-            "node": "Code in JavaScript1",
+            "node": "busca_calcula_alimentos",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code in JavaScript1": {
+    "busca_calcula_alimentos": {
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "monta_mensagem",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code in JavaScript2": {
+    "monta_mensagem": {
       "main": [
         [
           {
             "node": "Send a text message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request1": {
-      "main": [
-        [
-          {
-            "node": "Basic LLM Chain1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Basic LLM Chain1",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Basic LLM Chain",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Basic LLM Chain1": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -556,7 +622,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "31ba691a-b77b-4547-9ea8-5931baadcbda",
+  "versionId": "10dbdfcf-08b6-4de9-8f55-ebdb59d5b6ce",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f06cc82f881f1b452537225f1ef057f37627d7ada0e26d9faef713cefebcceeb"
