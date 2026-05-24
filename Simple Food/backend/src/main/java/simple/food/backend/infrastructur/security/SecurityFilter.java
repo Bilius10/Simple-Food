@@ -33,7 +33,7 @@ public class SecurityFilter extends OncePerRequestFilter{
         if (token != null) {
             String email = tokenService.getSubject(token);
             var user = repository.findByEmail(email)
-                    .orElseThrow(() -> new ServiceException(ErrorMessages.EMPLOYEE_NOT_FOUND_BY_EMAIL, HttpStatus.INTERNAL_SERVER_ERROR));
+                    .orElseThrow(() -> new ServiceException(ErrorMessages.USER_NOT_FOUND_BY_EMAIL, HttpStatus.INTERNAL_SERVER_ERROR));
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 

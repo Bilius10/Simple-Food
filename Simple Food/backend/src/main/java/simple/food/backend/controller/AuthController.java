@@ -1,6 +1,8 @@
 package simple.food.backend.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,15 +13,17 @@ import simple.food.backend.dto.RegisterRequest;
 import simple.food.backend.model.usuario.UsuarioRepository;
 import simple.food.backend.model.usuario.UsuarioService;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UsuarioService usuarioService;
+    @Value("${security.jwt.expiration-hours}")
+    private long expiration;
 
-    public AuthController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
+    @Autowired
+    private UsuarioService usuarioService;
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequest req) {
@@ -30,7 +34,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest req) {
-        return null;
+        String token = usuarioService.login(req.getEmail(), req.getPassword());
+
+        AuthResponse authResponse = new AuthResponse(token, LocalDateTime.now().plusHours(expiration));
+
+        return ResponseEntity.ok().body(authResponse);
     }
 }
 

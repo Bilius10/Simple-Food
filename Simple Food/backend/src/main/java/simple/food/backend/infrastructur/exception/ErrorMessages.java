@@ -1,14 +1,17 @@
 package simple.food.backend.infrastructur.exception;
 
 public enum ErrorMessages {
-    EMPLOYEE_NOT_FOUND_BY_EMAIL("Funcionário não encontrado com email: %s"),
+    USER_NOT_FOUND_BY_EMAIL("Email não esta em uso"),
     SERVICE_ERROR("Service error: %s"),
     VALIDATION_ERROR("Validation error: %s"),
     UNAUTHORIZED("Sem autorização para acessar este recurso"),
     INVALID_TOKEN("Token inválido ou expirado"),
     RESOURCE_NOT_FOUND("Recurso não encontrado: %s"),
     INTERNAL_ERROR("Error interno: %s"),
-    EMAIL_OR_WHATSAPP_NUMBER_ALREADY_EXISTS("Email ou número de WhatsApp já estão em uso");
+    EMAIL_OR_WHATSAPP_NUMBER_ALREADY_EXISTS("Email ou número de WhatsApp já estão em uso"),
+    INVALID_CREDENTIALS("Credenciais inválidas"),
+    FOOD_ITEM_NOT_FOUND("Item de comida não encontrado"),
+    USER_NOT_FOUND("Usuário não encontrado");
 
     private final String template;
 
