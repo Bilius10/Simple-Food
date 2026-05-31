@@ -4,13 +4,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import simple.food.backend.dto.AuthResponse;
 import simple.food.backend.dto.LoginRequest;
 import simple.food.backend.dto.RegisterRequest;
-import simple.food.backend.model.usuario.UsuarioRepository;
 import simple.food.backend.model.usuario.UsuarioService;
 
 import java.time.LocalDateTime;

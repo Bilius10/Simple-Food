@@ -2,10 +2,17 @@ package simple.food.backend.model.registroconsumo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import simple.food.backend.dto.registroconsumo.AlimentoRequest;
 import simple.food.backend.dto.registroconsumo.RegistroConsumoRequest;
 import simple.food.backend.dto.registroconsumo.RegistroConsumoResponse;
+import simple.food.backend.model.tabelanutricional.TabelaNutricional;
 import simple.food.backend.model.tabelanutricional.TabelaNutricionalService;
+import simple.food.backend.model.usuario.Usuario;
 import simple.food.backend.model.usuario.UsuarioService;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class RegistroConsumoService {
@@ -21,12 +28,26 @@ public class RegistroConsumoService {
 
     public RegistroConsumoResponse create(RegistroConsumoRequest registroConsumoRequest) {
         var usuario = usuarioService.findById(registroConsumoRequest.getUsuarioId());
-        var tabelaNutricional = tabelaNutricionalService.findById(registroConsumoRequest.getTabelaNutricionalId());
 
-        RegistroConsumo registroConsumo = new RegistroConsumo(usuario, tabelaNutricional, registroConsumoRequest);
+        List<RegistroConsumo> registroConsumos = mapToRegistroConsumoList(registroConsumoRequest.getAlimentos(),
+                usuario, registroConsumoRequest.getDataHoraConsumo());
 
-        registroConsumoRepository.save(registroConsumo);
+        registroConsumoRepository.saveAll(registroConsumos);
+        return new RegistroConsumoResponse().fromRegistroConsumo(registroConsumos);
+    }
 
-        return new RegistroConsumoResponse(registroConsumo);
+    private List<RegistroConsumo> mapToRegistroConsumoList(List<AlimentoRequest> alimentoRequest, Usuario usuario,
+                                                           LocalDateTime dataHoraConsumo) {
+
+        List<RegistroConsumo> consumos = new ArrayList<>(List.of());
+
+        alimentoRequest.forEach(alimento -> {
+            TabelaNutricional tabelaNutricional =
+                    tabelaNutricionalService.findById(alimento.getTabelaNutricionalId());
+
+            consumos.add(new RegistroConsumo(alimento, usuario, tabelaNutricional, dataHoraConsumo));
+        });
+
+        return consumos;
     }
 }
