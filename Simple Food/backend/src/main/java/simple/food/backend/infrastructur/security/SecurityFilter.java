@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,10 +48,18 @@ public class SecurityFilter extends OncePerRequestFilter{
     private String recoverToken(HttpServletRequest request) {
         String authHeader = request.getHeader(AUTHORIZATION);
 
-        if (authHeader == null) {
-            return null;
+        if (authHeader != null && authHeader.startsWith(BEARER)) {
+            return authHeader.substring(BEARER.length());
         }
 
-        return authHeader.replace(BEARER, "");
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if ("sf_token".equals(c.getName())) {
+                    return c.getValue();
+                }
+            }
+        }
+
+        return null;
     }
 }

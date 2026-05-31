@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import simple.food.backend.dto.AuthResponse;
-import simple.food.backend.dto.LoginRequest;
-import simple.food.backend.dto.RegisterRequest;
+import simple.food.backend.dto.auth.AuthResponse;
+import simple.food.backend.dto.auth.LoginRequest;
+import simple.food.backend.dto.auth.RegisterRequest;
 import simple.food.backend.model.usuario.UsuarioService;
 
 import java.time.LocalDateTime;

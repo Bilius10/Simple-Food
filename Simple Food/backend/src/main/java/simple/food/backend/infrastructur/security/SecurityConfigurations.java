@@ -32,11 +32,13 @@ public class SecurityConfigurations {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/**").permitAll();
+                    auth.requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/registro", "/").permitAll();
+                    auth.requestMatchers("/dashboard").hasRole("USER");
                     auth.anyRequest().permitAll();
                 })
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/auth/login"))
                 )
                 .addFilterBefore((Filter) securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
