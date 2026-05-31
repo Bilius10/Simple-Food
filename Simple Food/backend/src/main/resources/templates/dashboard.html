@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dashboard — Simple Food</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+    <style>
+        /* Small additions to the existing login.css just for dashboard layout */
+        .app-shell{display:flex;min-height:100vh}
+        .nav{width:260px;background:#fff;border-right:1px solid #eef2f6;padding:24px}
+        .nav h3{margin:0 0 12px;color:var(--accent-dark)}
+        .nav ul{list-style:none;padding:0;margin:0}
+        .nav li{padding:12px;border-radius:10px;color:#0f172a;cursor:pointer;margin-bottom:6px}
+        .nav li.active{background:linear-gradient(90deg,var(--bg-start),var(--bg-end));box-shadow:inset 0 0 0 1px rgba(43,182,115,0.06)}
+        .main{flex:1;padding:32px}
+        .card.inline{padding:20px;border-radius:12px}
+    </style>
+</head>
+<body>
+<main class="app-shell">
+    <nav class="nav">
+        <h3>Simple Food</h3>
+        <ul id="menu">
+            <li data-key="dashboard" class="active">Dashboard</li>
+            <li data-key="cadastrar">Cadastrar consumo</li>
+            <li data-key="visualizar">Visualizar alimentos</li>
+        </ul>
+        <div style="margin-top:18px;font-size:13px;color:var(--muted)">Versão demo — sem navegação</div>
+    </nav>
+
+    <section class="main">
+        <div class="card inline" id="content">
+            <h2>Bem-vindo ao Dashboard</h2>
+            <p class="muted">Selecione uma opção no menu à esquerda para ver o conteúdo (neste demo não há redirecionamentos).</p>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>
+

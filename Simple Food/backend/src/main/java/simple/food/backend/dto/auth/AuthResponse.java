@@ -1,4 +1,4 @@
-package simple.food.backend.dto;
+package simple.food.backend.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

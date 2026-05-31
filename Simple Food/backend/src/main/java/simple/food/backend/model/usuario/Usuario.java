@@ -60,6 +60,7 @@ public class Usuario implements UserDetails {
         this.email = email;
         this.senhaHash = senhaHash;
         this.numeroWhatsapp = numeroWhatsapp;
+        this.setRole(UserRole.USER);
     }
 
     @Override
