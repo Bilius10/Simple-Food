@@ -1,11 +1,16 @@
 package simple.food.backend.dto.registroconsumo;
 
 import jakarta.validation.constraints.*;
-import simple.food.backend.model.tabelanutricional.TabelaNutricional;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
-public class InformacoesNutricionaisAlimento {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AlimentoRequest {
 
     @NotNull(message = "{registro.consumo.tabelaNutricionalId.required}")
     private Long tabelaNutricionalId;
@@ -33,15 +38,4 @@ public class InformacoesNutricionaisAlimento {
 
     @Size(max = 2048, message = "{registro.consumo.fotoEnviadaUrl.size}")
     private String fotoEnviadaUrl;
-
-    public InformacoesNutricionaisAlimento(TabelaNutricional tabelaNutricional, Double quantidadeConsumida,
-                                           String fotoEnviadaUrl, Double calorias) {
-        this.tabelaNutricionalId = tabelaNutricional.getNumeroDoAlimento();
-        this.gordura = tabelaNutricional.getLipideosG();
-        this.proteina = tabelaNutricional.getProteinaG();
-        this.carboidrato = tabelaNutricional.getCarboidratoG();
-        this.calorias = calorias;
-        this.quantidadeConsumida = quantidadeConsumida;
-        this.fotoEnviadaUrl = fotoEnviadaUrl;
-    }
 }

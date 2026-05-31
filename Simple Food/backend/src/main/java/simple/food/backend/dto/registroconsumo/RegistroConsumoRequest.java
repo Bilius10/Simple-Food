@@ -20,5 +20,5 @@ public class RegistroConsumoRequest {
     @NotNull(message = "{registro.consumo.usuarioId.required}")
     private Long usuarioId;
 
-    private List<InformacoesNutricionaisAlimento> alimentos;
+    private List<AlimentoRequest> alimentos;
 }

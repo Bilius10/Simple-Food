@@ -110,7 +110,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        304,
+        352,
         -720
       ],
       "id": "41fd8a8a-0e99-4067-aabc-ee66a02cfc2d",
@@ -401,7 +401,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -304,
+        -400,
         -720
       ],
       "id": "fafbc46d-3f2f-4732-a97e-6d9c9f8338df",
@@ -421,11 +421,135 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -96,
+        -112,
         -720
       ],
       "id": "a93d0215-4429-4776-b057-57ff4dc4e92c",
       "name": "monta_mensagem"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputData = $input.all();\n\nconst alimentos = inputData.map((item, index) => {\n  const data = item.json;\n\n  let quantidade = 100.00;\n  \n  try {\n    const jsonCorrespondente = $(\"converto_json\").itemMatching(index);\n    \n    if (jsonCorrespondente && jsonCorrespondente.json.quantity_g) {\n      quantidade = parseFloat(jsonCorrespondente.json.quantity_g);\n    }\n  } catch (error) {\n    console.log(\"Não foi possível parear via itemMatching, usando fallback.\");\n  }\n\n  return {\n    tabelaNutricionalId: Number(data.n_mero_do_alimento) || 0, \n    gordura: parseFloat(data.gorduras_g) || 0.0,\n    proteina: parseFloat(data.proteina_g) || 0.0,\n    carboidrato: parseFloat(data.carboidratos_g) || 0.0,\n    calorias: parseFloat(data.calorias_kcal) || 0.0,\n    quantidadeConsumida: quantidade,\n    fotoEnviadaUrl: null\n  };\n});\n\nconst idUsuario = $(\"busca_usuario\").first().json.id;\nconst dataAtual = new Date();\ndataAtual.setTime(dataAtual.getTime() - (3 * 60 * 60 * 1000));\nconst dataFormatada = dataAtual.getFullYear() + '-' +\n  String(dataAtual.getMonth() + 1).padStart(2, '0') + '-' +\n  String(dataAtual.getDate()).padStart(2, '0') + 'T' +\n  String(dataAtual.getHours()).padStart(2, '0') + ':' +\n  String(dataAtual.getMinutes()).padStart(2, '0') + ':' +\n  String(dataAtual.getSeconds()).padStart(2, '0');\n\nconst jsonFinal = {\n  dataHoraConsumo: dataFormatada,\n  usuarioId: Number(idUsuario) || 0,\n  alimentos: alimentos\n};\n\nreturn [{ json: jsonFinal }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        -480
+      ],
+      "id": "136d09ae-fd3f-4886-ab9a-6a148ae39340",
+      "name": "monta_request_body"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost.internal:8080/registro_consumo",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        352,
+        -496
+      ],
+      "id": "b71b8817-49a1-48bd-aae8-e8d5da9a5f3b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5ea0d2b9-f159-4e7b-b132-ef27d67aaadc",
+              "leftValue": "={{ $json.alimentos }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "9ffd738e-22b4-4cba-b5d2-e49d8da3e962",
+              "leftValue": "={{ $json.usuarioId }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        112,
+        -480
+      ],
+      "id": "683da5c5-551d-40d9-9f6d-810fdc82266f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{ $('dados').item.json.group_id }}",
+        "text": "=❌Erro ao salvar a refeição",
+        "linkPreview": "={{ true }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        368,
+        -320
+      ],
+      "id": "70fb9cd6-3764-43fa-8d5b-572d9b8ec389",
+      "name": "Send a text message1",
+      "credentials": {
+        "wahaApi": {
+          "id": "u5iqZzeUa8OqRGsw",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "=default",
+        "chatId": "={{ $('dados').item.json.group_id }}",
+        "text": "=✅Refeição salva com sucesso",
+        "linkPreview": "={{ true }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        560,
+        -496
+      ],
+      "id": "745a15cc-0cae-46e4-a4e1-c194c2e3d060",
+      "name": "Send a text message2",
+      "credentials": {
+        "wahaApi": {
+          "id": "u5iqZzeUa8OqRGsw",
+          "name": "WAHA account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -598,6 +722,11 @@
       "main": [
         [
           {
+            "node": "monta_request_body",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "monta_mensagem",
             "type": "main",
             "index": 0
@@ -615,6 +744,46 @@
           }
         ]
       ]
+    },
+    "monta_request_body": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -622,7 +791,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "10dbdfcf-08b6-4de9-8f55-ebdb59d5b6ce",
+  "versionId": "2502aaf0-4afb-4766-ac89-5a24da6e0289",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f06cc82f881f1b452537225f1ef057f37627d7ada0e26d9faef713cefebcceeb"
