@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MacrosSummary {
-    private double proteina;
-    private double carboidrato;
-    private double gordura;
-    private double calorias;
+    private Double proteina;
+    private Double carboidrato;
+    private Double gordura;
+    private Double caloriasTotais;
+    private Object dataHoraConsumo;
 }

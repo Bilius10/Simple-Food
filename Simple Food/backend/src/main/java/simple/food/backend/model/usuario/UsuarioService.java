@@ -1,12 +1,15 @@
 package simple.food.backend.model.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import simple.food.backend.infrastructur.email.SpringMailSenderService;
 import simple.food.backend.infrastructur.exception.ErrorMessages;
 import simple.food.backend.infrastructur.exception.ServiceException;
+import simple.food.backend.infrastructur.security.SecurityFilter;
 import simple.food.backend.infrastructur.security.TokenService;
 
 @Service
@@ -23,6 +26,9 @@ public class UsuarioService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private SecurityFilter securityFilter;
 
     public void register(String nome, String email, String whatsappNumber, String password) {
         validateExistsByEmailOrWhatsappNumber(email, whatsappNumber);
@@ -60,5 +66,20 @@ public class UsuarioService {
     public Usuario findById(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ErrorMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
+    }
+
+    public void hasRoleOrIsOwner(Long userId) {
+        Usuario authenticatedUser = securityFilter.getAuthenticatedUser();
+
+        if(authenticatedUser.getRole().equals(UserRole.ADMIN) ||
+                authenticatedUser.getRole().equals(UserRole.NUTRITIONIST)) {
+            return;
+        }
+
+        if(authenticatedUser.getId().equals(userId)) {
+            return;
+        }
+
+        throw new ServiceException(ErrorMessages.USER_NOT_AUTHORIZED, HttpStatus.UNAUTHORIZED);
     }
 }

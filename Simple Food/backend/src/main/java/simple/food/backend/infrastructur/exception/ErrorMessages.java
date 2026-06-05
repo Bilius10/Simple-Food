@@ -11,7 +11,9 @@ public enum ErrorMessages {
     EMAIL_OR_WHATSAPP_NUMBER_ALREADY_EXISTS("Email ou número de WhatsApp já estão em uso"),
     INVALID_CREDENTIALS("Credenciais inválidas"),
     FOOD_ITEM_NOT_FOUND("Item de comida não encontrado"),
-    USER_NOT_FOUND("Usuário não encontrado");
+    USER_NOT_FOUND("Usuário não encontrado"),
+    USER_NOT_AUTHENTICATED("Usuário não autenticado"),
+    USER_NOT_AUTHORIZED("Usuário não autorizado para acessar este recurso");
 
     private final String template;
 
