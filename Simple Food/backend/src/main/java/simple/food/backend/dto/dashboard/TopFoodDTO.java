@@ -11,9 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TopFoodDTO {
     private Long numeroDoAlimento;
+    private String categoria;
     private String descricao;
     private Double quantidadeTotal;
     private Double caloriasTotal;
     private Long registrosCount;
+
 }
 

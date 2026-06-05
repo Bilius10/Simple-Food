@@ -13,10 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import simple.food.backend.infrastructur.exception.ErrorMessages;
 import simple.food.backend.infrastructur.exception.ServiceException;
+import simple.food.backend.model.usuario.Usuario;
 import simple.food.backend.model.usuario.UsuarioRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -61,5 +63,17 @@ public class SecurityFilter extends OncePerRequestFilter{
         }
 
         return null;
+    }
+
+    public Usuario getAuthenticatedUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(email);
+        Optional<Usuario> byEmail = repository.findByEmail(email);
+
+        if(byEmail.isEmpty()) {
+            throw new ServiceException(ErrorMessages.USER_NOT_FOUND_BY_EMAIL, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return byEmail.get();
     }
 }
