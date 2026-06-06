@@ -1,29 +1,35 @@
-(function(){
+(function () {
   const form = document.getElementById('registro-form');
   const errorBox = document.getElementById('error');
   const successBox = document.getElementById('success');
 
-  function showError(msg){
+  if (!form || !errorBox || !successBox) {
+    return;
+  }
+
+  function showError(message) {
     errorBox.hidden = false;
-    errorBox.textContent = msg;
+    errorBox.textContent = message;
     successBox.hidden = true;
     successBox.textContent = '';
   }
 
-  function showSuccess(msg){
+  function showSuccess(message) {
     successBox.hidden = false;
-    successBox.textContent = msg;
+    successBox.textContent = message;
     errorBox.hidden = true;
     errorBox.textContent = '';
   }
 
-  function clearMessages(){
-    errorBox.hidden = true; errorBox.textContent = '';
-    successBox.hidden = true; successBox.textContent = '';
+  function clearMessages() {
+    errorBox.hidden = true;
+    errorBox.textContent = '';
+    successBox.hidden = true;
+    successBox.textContent = '';
   }
 
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
     clearMessages();
 
     const name = document.getElementById('name').value.trim();
@@ -32,38 +38,51 @@
     const password = document.getElementById('password').value;
     const passwordConfirm = document.getElementById('passwordConfirm').value;
 
-    if(!name || !email || !whatsapp || !password || !passwordConfirm){
+    if (!name || !email || !whatsapp || !password || !passwordConfirm) {
       showError('Preencha todos os campos.');
       return;
     }
 
-    if(password !== passwordConfirm){
-      showError('As senhas não coincidem.');
+    if (password !== passwordConfirm) {
+      showError('As senhas nao coincidem.');
       return;
     }
 
-    try{
-      const res = await fetch('/auth/register', {
+    try {
+      const response = await fetch('/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, whatsappNumber: whatsapp, password })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          whatsappNumber: whatsapp,
+          password: password
+        })
       });
 
-      if(!res.ok){
-        let msg = 'Falha ao registrar. Verifique os dados.';
-        try{ const b = await res.json(); if(b && b.message) msg = b.message; }catch(_){ }
-        showError(msg);
+      if (!response.ok) {
+        let message = 'Falha ao registrar. Verifique os dados.';
+        try {
+          const body = await response.json();
+          if (body && body.message) {
+            message = body.message;
+          }
+        } catch (_error) {
+          // noop
+        }
+        showError(message);
         return;
       }
 
-      // sucesso
       showSuccess('Registro efetuado com sucesso. Redirecionando para login...');
-      setTimeout(() => { window.location.href = '/auth/login?registered=1'; }, 1200);
-
-    }catch(err){
-      console.error(err);
+      window.setTimeout(function () {
+        window.location.href = '/auth/login?registered=1';
+      }, 1200);
+    } catch (error) {
+      console.error(error);
       showError('Erro de rede ao tentar registrar.');
     }
   });
 })();
-

@@ -1,92 +1,107 @@
-(function(){
+(function () {
   const form = document.getElementById('login-form');
   const errorBox = document.getElementById('error');
   const successBox = document.getElementById('success');
 
-  function showError(msg){
-    errorBox.hidden = false;
-    errorBox.textContent = msg;
+  if (!form || !errorBox || !successBox) {
+    return;
   }
 
-  function clearError(){
+  function showError(message) {
+    errorBox.hidden = false;
+    errorBox.textContent = message;
+    successBox.hidden = true;
+    successBox.textContent = '';
+  }
+
+  function clearMessages() {
     errorBox.hidden = true;
     errorBox.textContent = '';
+    successBox.hidden = true;
+    successBox.textContent = '';
   }
 
-  function showSuccess(msg){
-    if(!successBox) return;
+  function showSuccess(message) {
     successBox.hidden = false;
-    successBox.textContent = msg;
+    successBox.textContent = message;
   }
 
-  // show success if redirected after registration
-  try{
+  try {
     const params = new URLSearchParams(window.location.search);
-    if(params.get('registered') === '1'){
-      showSuccess('Registro efetuado com sucesso. Faça login.');
+    if (params.get('registered') === '1') {
+      showSuccess('Registro efetuado com sucesso. Faca login.');
     }
-  }catch(_){ }
+  } catch (_error) {
+    // noop
+  }
 
   function setCookie(name, value, expiresAtIso) {
-    let cookie = name + '=' + encodeURIComponent(value) + '; Path=/; SameSite=Lax';
-    // If site served over HTTPS in production, consider setting Secure flag.
-    cookie += ';';
+    let cookie = name + '=' + encodeURIComponent(value) + '; Path=/; SameSite=Lax;';
+
     if (expiresAtIso) {
       try {
-        const expDate = new Date(expiresAtIso);
-        if (!isNaN(expDate.getTime())) {
-          cookie += ' Expires=' + expDate.toUTCString() + ';';
+        const expirationDate = new Date(expiresAtIso);
+        if (!Number.isNaN(expirationDate.getTime())) {
+          cookie += ' Expires=' + expirationDate.toUTCString() + ';';
         }
-      } catch (e) {
-        // ignore
+      } catch (_error) {
+        // noop
       }
     }
+
     document.cookie = cookie;
   }
 
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    clearError();
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    clearMessages();
 
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
-    if(!email || !password){
+    if (!email || !password) {
       showError('Preencha e-mail e senha.');
       return;
     }
 
-    try{
-      const res = await fetch('/auth/login', {
+    try {
+      const response = await fetch('/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email: email, password: password })
       });
 
-      if(!res.ok){
-        // tenta extrair mensagem do backend
-        let msg = 'Falha ao autenticar. Verifique suas credenciais.';
-        try{ const body = await res.json(); if(body && body.message) msg = body.message; }catch(_){ }
-        showError(msg);
+      if (!response.ok) {
+        let message = 'Falha ao autenticar. Verifique suas credenciais.';
+        try {
+          const body = await response.json();
+          if (body && body.message) {
+            message = body.message;
+          }
+        } catch (_error) {
+          // noop
+        }
+        showError(message);
         return;
       }
 
-      const data = await res.json();
-      // salva token e redireciona
+      const data = await response.json();
       localStorage.setItem('sf_token', data.token);
-      if(data.expiresAt) localStorage.setItem('sf_token_expires', data.expiresAt);
 
-      // also store token as cookie so server-side filter can read it on page navigation
-      // expiresAt is expected to be an ISO-8601 string (from server) or undefined
+      if (data.expiresAt) {
+        localStorage.setItem('sf_token_expires', data.expiresAt);
+      }
+
+      if (data.userId) {
+        localStorage.setItem('sf_userId', data.userId);
+      }
+
       setCookie('sf_token', data.token, data.expiresAt);
-
-      // redireciona para dashboard (ajuste conforme sua rota)
       window.location.href = '/dashboard';
-
-    }catch(err){
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       showError('Erro de rede ao tentar efetuar login.');
     }
   });

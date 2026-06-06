@@ -1,42 +1,140 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Dashboard — Simple Food</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}" />
-    <style>
-        /* Small additions to the existing login.css just for dashboard layout */
-        .app-shell{display:flex;min-height:100vh}
-        .nav{width:260px;background:#fff;border-right:1px solid #eef2f6;padding:24px}
-        .nav h3{margin:0 0 12px;color:var(--accent-dark)}
-        .nav ul{list-style:none;padding:0;margin:0}
-        .nav li{padding:12px;border-radius:10px;color:#0f172a;cursor:pointer;margin-bottom:6px}
-        .nav li.active{background:linear-gradient(90deg,var(--bg-start),var(--bg-end));box-shadow:inset 0 0 0 1px rgba(43,182,115,0.06)}
-        .main{flex:1;padding:32px}
-        .card.inline{padding:20px;border-radius:12px}
-    </style>
-</head>
-<body>
-<main class="app-shell">
-    <nav class="nav">
-        <h3>Simple Food</h3>
-        <ul id="menu">
-            <li data-key="dashboard" class="active">Dashboard</li>
-            <li data-key="cadastrar">Cadastrar consumo</li>
-            <li data-key="visualizar">Visualizar alimentos</li>
-        </ul>
-        <div style="margin-top:18px;font-size:13px;color:var(--muted)">Versão demo — sem navegação</div>
-    </nav>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/base :: html(
+        title='Dashboard',
+        styles=~{::styles},
+        scripts=~{::scripts},
+        content=~{::content},
+        bodyClass='page-dashboard'
+      )}">
+<th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+</th:block>
 
-    <section class="main">
-        <div class="card inline" id="content">
-            <h2>Bem-vindo ao Dashboard</h2>
-            <p class="muted">Selecione uma opção no menu à esquerda para ver o conteúdo (neste demo não há redirecionamentos).</p>
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/dashboard.js}" defer></script>
+</th:block>
+
+<section th:fragment="content" class="dashboard-shell" data-page="dashboard">
+    <aside class="dashboard-sidebar surface-card">
+        <div class="section-heading">
+            <span class="eyebrow">Controle diario</span>
+            <h1>Dashboard nutricional</h1>
+            <p>Resumo rapido das refeicoes registradas e distribuicao de macros.</p>
         </div>
-    </section>
-</main>
-<script th:src="@{/js/dashboard.js}"></script>
-</body>
-</html>
 
+        <nav class="sidebar-nav" aria-label="Navegacao principal">
+            <a class="sidebar-link active" th:href="@{/dashboard}">Visao geral</a>
+            <button type="button" class="sidebar-link sidebar-link--button" data-action="refresh-all">
+                Atualizar dados
+            </button>
+        </nav>
+
+        <div class="sidebar-note">
+            <strong>Fluxo mobile-first</strong>
+            <p>Os principais controles aparecem primeiro e se expandem em telas maiores.</p>
+        </div>
+    </aside>
+
+    <div class="dashboard-content">
+        <section class="surface-card dashboard-hero">
+            <div>
+                <span class="eyebrow">Hoje</span>
+                <h2 id="dashboard-title">Sua rotina alimentar em foco</h2>
+                <p id="dashboard-subtitle">Selecione uma data para carregar a visao do dia e revisar o periodo recente.</p>
+            </div>
+            <div class="hero-actions">
+                <button type="button" class="btn-secondary" data-action="refresh-all">Atualizar</button>
+            </div>
+        </section>
+
+        <section class="surface-card filters-panel">
+            <div class="filters-grid">
+                <label class="field">
+                    <span>Data do dia</span>
+                    <input type="date" id="daily-date" />
+                </label>
+
+                <button type="button" class="btn-primary btn-compact" data-action="load-daily">
+                    Carregar dia
+                </button>
+
+                <label class="field">
+                    <span>Periodo inicial</span>
+                    <input type="date" id="range-start" />
+                </label>
+
+                <label class="field">
+                    <span>Periodo final</span>
+                    <input type="date" id="range-end" />
+                </label>
+
+                <button type="button" class="btn-secondary btn-compact" data-action="load-range">
+                    Atualizar periodo
+                </button>
+            </div>
+        </section>
+
+        <section class="metrics-grid">
+            <article class="metric-card surface-card">
+                <span class="metric-label">Itens no dia</span>
+                <strong class="metric-value" id="daily-count">--</strong>
+                <p>Quantidade total de registros carregados para a data selecionada.</p>
+            </article>
+
+            <article class="metric-card surface-card protein">
+                <span class="metric-label">Proteina</span>
+                <strong class="metric-value" id="metric-protein">--</strong>
+                <p>Total acumulado no dia atual.</p>
+            </article>
+
+            <article class="metric-card surface-card carb">
+                <span class="metric-label">Carboidratos</span>
+                <strong class="metric-value" id="metric-carb">--</strong>
+                <p>Energia distribuida ao longo do periodo.</p>
+            </article>
+
+            <article class="metric-card surface-card fat">
+                <span class="metric-label">Gordura</span>
+                <strong class="metric-value" id="metric-fat">--</strong>
+                <p>Leitura resumida do equilibrio nutricional.</p>
+            </article>
+        </section>
+
+        <section class="dashboard-grid">
+            <article class="surface-card panel-card">
+                <div class="panel-header">
+                    <div>
+                        <span class="eyebrow">Consumo diario</span>
+                        <h3>Refeicoes registradas</h3>
+                    </div>
+                </div>
+                <div id="daily-summary" class="summary-strip"></div>
+                <div id="daily-table-container" class="panel-content"></div>
+            </article>
+
+            <article class="surface-card panel-card">
+                <div class="panel-header">
+                    <div>
+                        <span class="eyebrow">Top alimentos</span>
+                        <h3>Mais recorrentes no periodo</h3>
+                    </div>
+                </div>
+                <div id="top-foods-table" class="panel-content"></div>
+            </article>
+        </section>
+
+        <section class="surface-card panel-card">
+            <div class="panel-header">
+                <div>
+                    <span class="eyebrow">Macronutrientes</span>
+                    <h3>Distribuicao no periodo</h3>
+                </div>
+            </div>
+            <div id="macros-summary" class="panel-content"></div>
+        </section>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</section>
+</html>

@@ -1,71 +1,88 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrar — Simple Food</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}" />
-</head>
-<body>
-<main class="page">
-    <section class="left-panel">
-        <div class="hero">
-            <h1>Simple Food</h1>
-            <p>Cuidando da sua alimentação de forma simples e inteligente.</p>
-            <div class="illustration" aria-hidden="true">
-                <svg width="220" height="220" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 21s6-4 9-10c3-6 9-10 9-10s-6 0-12 4C3 11 3 21 3 21z" fill="#7bd389"/>
-                    <path d="M6 14c2-2 6-3 9-3" stroke="#2b8a3e" stroke-width="0.5"/>
-                </svg>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/base :: html(
+        title='Criar conta',
+        styles=~{::styles},
+        scripts=~{::scripts},
+        content=~{::content},
+        bodyClass='page-auth'
+      )}">
+<th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/css/auth.css}" />
+</th:block>
+
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/registro.js}" defer></script>
+</th:block>
+
+<section th:fragment="content" class="auth-layout">
+    <article class="hero-panel surface-card">
+        <span class="eyebrow">Nova jornada</span>
+        <h1>Monte sua base nutricional e acompanhe progresso com um fluxo simples.</h1>
+        <p class="hero-copy">
+            Cadastro enxuto, painel rapido e visual escuro pensado para consultas
+            frequentes em smartphone.
+        </p>
+
+        <div class="hero-list">
+            <div class="hero-list__item">
+                <strong>Visao do dia</strong>
+                <span>Resumo imediato das refeicoes e dos macronutrientes.</span>
+            </div>
+            <div class="hero-list__item">
+                <strong>Feedback instantaneo</strong>
+                <span>Mensagens e toasts sem recarregar a pagina inteira.</span>
+            </div>
+            <div class="hero-list__item">
+                <strong>Organizacao modular</strong>
+                <span>Templates compostos por fragmentos nativos do Thymeleaf.</span>
             </div>
         </div>
-    </section>
+    </article>
 
-    <section class="right-panel">
-        <div class="card">
+    <article class="auth-card surface-card">
+        <div class="section-heading">
+            <span class="eyebrow">Cadastro</span>
             <h2>Criar conta</h2>
-            <p class="muted">Crie sua conta para começar a controlar sua alimentação</p>
-
-            <form id="registro-form" novalidate>
-                <div class="field">
-                    <label for="name">Nome</label>
-                    <input id="name" name="name" type="text" placeholder="Seu nome" required maxlength="100" />
-                </div>
-
-                <div class="field">
-                    <label for="email">E-mail</label>
-                    <input id="email" name="email" type="email" placeholder="seu@exemplo.com" required maxlength="100" />
-                </div>
-
-                <div class="field">
-                    <label for="whatsapp">WhatsApp</label>
-                    <input id="whatsapp" name="whatsapp" type="tel" placeholder="+55 9 9999-9999" required maxlength="20" />
-                </div>
-
-                <div class="field">
-                    <label for="password">Senha</label>
-                    <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6" maxlength="50" />
-                </div>
-
-                <div class="field">
-                    <label for="passwordConfirm">Confirmar senha</label>
-                    <input id="passwordConfirm" name="passwordConfirm" type="password" placeholder="••••••••" required minlength="6" maxlength="50" />
-                </div>
-
-                <div id="error" class="error" role="alert" aria-live="polite" hidden></div>
-                <div id="success" class="success" role="status" aria-live="polite" hidden></div>
-
-                <button type="submit" class="btn-primary">Criar conta</button>
-
-                <div class="footer-links">
-                    <a th:href="@{/auth/login}">Voltar ao login</a>
-                </div>
-            </form>
-
-            <p class="small muted">Ao continuar, você concorda com nossos termos de uso.</p>
+            <p>Preencha os dados abaixo para comecar a registrar sua alimentacao.</p>
         </div>
-    </section>
-</main>
-<script th:src="@{/js/registro.js}"></script>
-</body>
+
+        <form id="registro-form" class="stack-form" novalidate>
+            <label class="field">
+                <span>Nome</span>
+                <input id="name" name="name" type="text" placeholder="Seu nome" required maxlength="100" />
+            </label>
+
+            <label class="field">
+                <span>E-mail</span>
+                <input id="email" name="email" type="email" placeholder="voce@exemplo.com" required maxlength="100" />
+            </label>
+
+            <label class="field">
+                <span>WhatsApp</span>
+                <input id="whatsapp" name="whatsapp" type="tel" placeholder="+55 11 99999-9999" required maxlength="20" />
+            </label>
+
+            <label class="field">
+                <span>Senha</span>
+                <input id="password" name="password" type="password" placeholder="Crie uma senha segura" required minlength="6" maxlength="50" />
+            </label>
+
+            <label class="field">
+                <span>Confirmar senha</span>
+                <input id="passwordConfirm" name="passwordConfirm" type="password" placeholder="Repita a senha" required minlength="6" maxlength="50" />
+            </label>
+
+            <div id="error" class="feedback error" role="alert" aria-live="polite" hidden></div>
+            <div id="success" class="feedback success" role="status" aria-live="polite" hidden></div>
+
+            <button type="submit" class="btn-primary">Criar conta</button>
+        </form>
+
+        <div class="auth-actions">
+            <a th:href="@{/auth/login}">Voltar ao login</a>
+            <span>Seus dados ficam no backend, nunca no front-end.</span>
+        </div>
+    </article>
+</section>
 </html>

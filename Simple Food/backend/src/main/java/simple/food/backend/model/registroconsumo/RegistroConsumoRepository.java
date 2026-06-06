@@ -1,6 +1,7 @@
 package simple.food.backend.model.registroconsumo;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,5 +50,22 @@ public interface RegistroConsumoRepository extends JpaRepository<RegistroConsumo
     GROUP BY r.tabelaNutricional.numeroDoAlimento, r.tabelaNutricional.categoriaDoAlimento, r.tabelaNutricional.descricaoDosAlimentos
     ORDER BY COALESCE(SUM(r.caloriasTotais), 0.0) DESC
     """)
-    List<TopFoodDTO> findTopFoodsByUserIdBetweenDates(Long userId, LocalDateTime start, LocalDateTime end);
+    List<TopFoodDTO> findTopFoodsByUserIdBetweenDates(
+            @Param("userId") Long userId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    Page<RegistroConsumo> findByUsuarioIdAndDataHoraConsumoBetween(
+            Long usuarioId,
+            LocalDateTime start,
+            LocalDateTime end,
+            Pageable pageable
+    );
+
+    Long countByUsuarioIdAndDataHoraConsumoBetween(
+            Long usuarioId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 }

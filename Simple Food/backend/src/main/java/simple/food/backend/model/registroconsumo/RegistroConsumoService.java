@@ -1,7 +1,10 @@
 package simple.food.backend.model.registroconsumo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import simple.food.backend.dto.dashboard.FoodsConsumed;
 import simple.food.backend.dto.dashboard.MacrosSummary;
 import simple.food.backend.dto.dashboard.TopFoodDTO;
 import simple.food.backend.dto.registroconsumo.AlimentoRequest;
@@ -63,6 +66,21 @@ public class RegistroConsumoService {
     public List<TopFoodDTO> findTopFoodsByUserIdBetweenDates(Long userId, LocalDateTime start, LocalDateTime end) {
         usuarioService.hasRoleOrIsOwner(userId);
         return registroConsumoRepository.findTopFoodsByUserIdBetweenDates(userId, start.with(LocalTime.MIN),
+                end.with(LocalTime.MAX));
+    }
+
+    public Page<FoodsConsumed> findByUsuarioIdAndDataHoraConsumoBetween(Long usuarioId, LocalDateTime start,
+                                                                          LocalDateTime end, int page, int size) {
+        usuarioService.hasRoleOrIsOwner(usuarioId);
+        Page<RegistroConsumo> registros = registroConsumoRepository.findByUsuarioIdAndDataHoraConsumoBetween(usuarioId, start.with(LocalTime.MIN),
+                end.with(LocalTime.MAX), PageRequest.of(page, size));
+
+        return registros.map(FoodsConsumed::new);
+    }
+
+    public Long countByUsuarioIdAndDataHoraConsumoBetween(Long usuarioId, LocalDateTime start, LocalDateTime end) {
+        usuarioService.hasRoleOrIsOwner(usuarioId);
+        return registroConsumoRepository.countByUsuarioIdAndDataHoraConsumoBetween(usuarioId, start.with(LocalTime.MIN),
                 end.with(LocalTime.MAX));
     }
 }

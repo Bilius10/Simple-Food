@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Value("${security.jwt.expiration-hours}")
-    private long expiration;
-
     @Autowired
     private UsuarioService usuarioService;
 
@@ -31,11 +28,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest req) {
-        String token = usuarioService.login(req.getEmail(), req.getPassword());
-
-        AuthResponse authResponse = new AuthResponse(token, LocalDateTime.now().plusHours(expiration));
+        AuthResponse authResponse = usuarioService.login(req.getEmail(), req.getPassword());
 
         return ResponseEntity.ok().body(authResponse);
     }
 }
+
 
