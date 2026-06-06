@@ -67,7 +67,6 @@ public class SecurityFilter extends OncePerRequestFilter{
 
     public Usuario getAuthenticatedUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(email);
         Optional<Usuario> byEmail = repository.findByEmail(email);
 
         if(byEmail.isEmpty()) {

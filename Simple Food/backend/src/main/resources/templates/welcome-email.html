@@ -1,44 +1,77 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bem-vindo</title>
+    <title>Bem-vindo | Simple Food</title>
 </head>
-<body style="font-family: Arial, Helvetica, sans-serif; background:#f6f6f6; margin:0; padding:20px;">
-    <div style="max-width:600px; margin:0 auto; background:#ffffff; padding:24px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-        <header style="text-align:center; margin-bottom:16px;">
-            <h2 th:text="${appName}">Nome do Serviço</h2>
-        </header>
+<body style="margin:0; padding:24px; background:#121413; font-family:Arial, Helvetica, sans-serif; color:#e8f0ea;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                   style="max-width:640px; border-collapse:collapse; background:#1e211f; border:1px solid rgba(232,240,234,0.08); border-radius:18px; overflow:hidden;">
+                <tr>
+                    <td style="padding:32px 32px 24px; background:linear-gradient(135deg, rgba(76,175,80,0.26), rgba(41,182,246,0.18));">
+                        <p style="margin:0 0 10px; font-size:12px; letter-spacing:1.8px; text-transform:uppercase; color:#9ba39e;">
+                            Nutrition tracking
+                        </p>
+                        <h1 style="margin:0; font-size:28px; line-height:1.2;" th:text="${appName}">Simple Food</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:32px;">
+                        <h2 style="margin:0 0 12px; font-size:24px; line-height:1.25;"
+                            th:text="${userName} != null and !#strings.isEmpty(userName) ? 'Ola, ' + userName + '!' : 'Ola!'">
+                            Ola!
+                        </h2>
 
-        <section>
-            <h1 style="font-size:20px; margin:0 0 8px 0;"
-                th:text="${userName} != null and ${userName} != '' ? 'Olá, ' + ${userName} + '!' : 'Olá!'">
-                Olá!
-            </h1>
+                        <p style="margin:0 0 14px; color:#c3ccc6; line-height:1.7;">
+                            <span th:text="'Sua conta no ' + ${appName} + ' ja esta pronta para uso.'">
+                                Sua conta ja esta pronta para uso.
+                            </span>
+                        </p>
 
-            <p style="color:#333; line-height:1.5;">
-                <span th:text="'Seja bem-vindo ao ' + ${appName} + '.'">Seja bem-vindo ao nosso serviço.</span>
-            </p>
+                        <p style="margin:0 0 24px; color:#9ba39e; line-height:1.7;">
+                            Entre no painel para acompanhar refeicoes, consultar macronutrientes
+                            e manter sua rotina alimentar organizada.
+                        </p>
 
-            <p style="color:#333; line-height:1.5;">Estamos felizes que você se juntou a nós. Para começar a usar, clique no botão abaixo:</p>
+                        <div style="margin:0 0 24px;">
+                            <a th:if="${actionUrl} != null and !#strings.isEmpty(actionUrl)"
+                               th:href="${actionUrl}"
+                               style="display:inline-block; padding:14px 22px; border-radius:999px; text-decoration:none; font-weight:700; background:#4caf50; color:#091109;">
+                                Acessar painel
+                            </a>
+                            <p th:unless="${actionUrl} != null and !#strings.isEmpty(actionUrl)"
+                               style="margin:0; color:#9ba39e;">
+                                Abra o Simple Food para comecar a registrar suas refeicoes.
+                            </p>
+                        </div>
 
-            <div style="text-align:center; margin:20px 0;">
-                <a th:if="${actionUrl} != null and ${actionUrl} != ''"
-                   th:href="${actionUrl}"
-                   style="display:inline-block; padding:12px 20px; background:#2b7cff; color:#fff; text-decoration:none; border-radius:4px;">
-                    Começar
-                </a>
-                <p th:unless="${actionUrl} != null and ${actionUrl} != ''" style="color:#666; font-size:14px;">Visite o site para mais informações.</p>
-            </div>
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:separate; border-spacing:0;">
+                            <tr>
+                                <td style="padding:14px; border:1px solid rgba(255,112,67,0.2); border-radius:14px; color:#c3ccc6;">
+                                    Proteina, carboidratos e gordura em leitura rapida para o dia.
+                                </td>
+                            </tr>
+                        </table>
 
-            <p style="color:#666; font-size:13px;">Se você não reconheceu essa ação, ignore este e-mail.</p>
-        </section>
-
-        <footer style="margin-top:20px; font-size:12px; color:#999; text-align:center;">
-            <p th:text="'© ' + ${appName} + ' - Todos os direitos reservados.'">© Nosso Serviço - Todos os direitos reservados.</p>
-        </footer>
-    </div>
+                        <p style="margin:24px 0 0; color:#9ba39e; font-size:13px;">
+                            Se voce nao reconhece este cadastro, ignore esta mensagem.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:0 32px 24px; color:#7f8983; font-size:12px;">
+                        <span th:text="'(c) ' + ${appName} + ' - Todos os direitos reservados.'">
+                            (c) Simple Food - Todos os direitos reservados.
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
-

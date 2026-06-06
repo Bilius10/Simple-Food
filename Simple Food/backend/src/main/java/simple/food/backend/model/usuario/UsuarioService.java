@@ -1,19 +1,24 @@
 package simple.food.backend.model.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
+import simple.food.backend.dto.auth.AuthResponse;
 import simple.food.backend.infrastructur.email.SpringMailSenderService;
 import simple.food.backend.infrastructur.exception.ErrorMessages;
 import simple.food.backend.infrastructur.exception.ServiceException;
 import simple.food.backend.infrastructur.security.SecurityFilter;
 import simple.food.backend.infrastructur.security.TokenService;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UsuarioService {
+
+    @Value("${security.jwt.expiration-hours}")
+    private long expiration;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -41,14 +46,14 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public String login(String email, String password){
+    public AuthResponse login(String email, String password){
         Usuario user = findByEmail(email);
 
         if(!passwordEncoder.matches(password, user.getPassword())) {
             throw new ServiceException(ErrorMessages.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
         }
 
-        return tokenService.generateToken(user);
+        return new AuthResponse(tokenService.generateToken(user), LocalDateTime.now().plusHours(expiration), user.getId());
     }
 
     private void validateExistsByEmailOrWhatsappNumber(String email, String whatsappNumber) {

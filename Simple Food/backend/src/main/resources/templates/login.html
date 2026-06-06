@@ -1,58 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Entrar — Simple Food</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}" />
-</head>
-<body>
-<main class="page">
-    <section class="left-panel">
-        <div class="hero">
-            <h1>Simple Food</h1>
-            <p>Cuidando da sua alimentação de forma simples e inteligente.</p>
-            <div class="illustration" aria-hidden="true">
-                <!-- simple SVG leaf to hint health/food -->
-                <svg width="220" height="220" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 21s6-4 9-10c3-6 9-10 9-10s-6 0-12 4C3 11 3 21 3 21z" fill="#7bd389"/>
-                    <path d="M6 14c2-2 6-3 9-3" stroke="#2b8a3e" stroke-width="0.5"/>
-                </svg>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/base :: html(
+        title='Entrar',
+        styles=~{::styles},
+        scripts=~{::scripts},
+        content=~{::content},
+        bodyClass='page-auth'
+      )}">
+<th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/css/auth.css}" />
+</th:block>
+
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/login.js}" defer></script>
+</th:block>
+
+<section th:fragment="content" class="auth-layout">
+    <article class="hero-panel surface-card">
+        <span class="eyebrow">Dark mode nutrition</span>
+        <h1>Entre e acompanhe sua rotina alimentar sem ruido visual.</h1>
+        <p class="hero-copy">
+            Painel pensado para uso diario no celular, com metas claras, feedback rapido
+            e foco no que realmente importa: consistencia.
+        </p>
+
+        <div class="hero-grid">
+            <div class="hero-metric protein">
+                <strong>Proteina</strong>
+                <span>Monitorada com destaque para preservar massa magra.</span>
+            </div>
+            <div class="hero-metric carb">
+                <strong>Carboidratos</strong>
+                <span>Distribuicao simples para energia ao longo do dia.</span>
+            </div>
+            <div class="hero-metric fat">
+                <strong>Agua e gordura</strong>
+                <span>Leitura rapida para hidratacao e equilibrio nutricional.</span>
             </div>
         </div>
-    </section>
+    </article>
 
-    <section class="right-panel">
-        <div class="card">
-            <h2>Entrar</h2>
-            <p class="muted">Use seu e-mail e senha para acessar sua conta</p>
-
-            <form id="login-form" novalidate>
-                <div class="field">
-                    <label for="email">E-mail</label>
-                    <input id="email" name="email" type="email" placeholder="seu@exemplo.com" required />
-                </div>
-
-                <div class="field">
-                    <label for="password">Senha</label>
-                    <input id="password" name="password" type="password" placeholder="••••••••" required minlength="6" />
-                </div>
-
-                <div id="success" class="success" role="status" aria-live="polite" hidden></div>
-                <div id="error" class="error" role="alert" aria-live="polite" hidden></div>
-
-                <button type="submit" class="btn-primary">Entrar</button>
-
-                <div class="footer-links">
-                    <a th:href="@{/registro}">Criar conta</a>
-                    <a th:href="@{/forgot-password}">Esqueci minha senha</a>
-                </div>
-            </form>
-
-            <p class="small muted">Ao continuar, você concorda com nossos termos de uso.</p>
+    <article class="auth-card surface-card">
+        <div class="section-heading">
+            <span class="eyebrow">Acesso</span>
+            <h2>Entrar na conta</h2>
+            <p>Use seu e-mail e senha para abrir o dashboard.</p>
         </div>
-    </section>
-</main>
-<script th:src="@{/js/login.js}"></script>
-</body>
+
+        <form id="login-form" class="stack-form" novalidate>
+            <label class="field">
+                <span>E-mail</span>
+                <input id="email" name="email" type="email" placeholder="voce@exemplo.com" required />
+            </label>
+
+            <label class="field">
+                <span>Senha</span>
+                <input id="password" name="password" type="password" placeholder="Digite sua senha" required minlength="6" />
+            </label>
+
+            <div id="success" class="feedback success" role="status" aria-live="polite" hidden></div>
+            <div id="error" class="feedback error" role="alert" aria-live="polite" hidden></div>
+
+            <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+
+        <div class="auth-actions">
+            <a th:href="@{/registro}">Criar conta</a>
+            <span>Precisa de ajuda? Fale com o suporte.</span>
+        </div>
+    </article>
+</section>
 </html>
