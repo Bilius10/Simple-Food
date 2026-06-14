@@ -10,7 +10,6 @@ import simple.food.backend.dto.dashboard.MacrosSummary;
 import simple.food.backend.dto.dashboard.TopFoodDTO;
 import simple.food.backend.dto.registroconsumo.RegistroConsumoRequest;
 import simple.food.backend.dto.registroconsumo.RegistroConsumoResponse;
-import simple.food.backend.model.registroconsumo.RegistroConsumo;
 import simple.food.backend.model.registroconsumo.RegistroConsumoService;
 import java.time.LocalDateTime;
 import java.util.List;

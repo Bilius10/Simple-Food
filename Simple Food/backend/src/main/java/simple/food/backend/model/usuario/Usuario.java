@@ -63,6 +63,14 @@ public class Usuario implements UserDetails {
         this.setRole(UserRole.USER);
     }
 
+    public Usuario update(String nome, String email, String numeroWhatsapp, Integer metaCaloriasDiarias) {
+        this.nome = nome;
+        this.email = email;
+        this.numeroWhatsapp = numeroWhatsapp;
+        this.metaCaloriasDiarias = metaCaloriasDiarias;
+        return this;
+    }
+
     @Override
     @JsonIgnore
     public String getPassword() {

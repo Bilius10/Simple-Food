@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import simple.food.backend.dto.auth.AuthResponse;
+import simple.food.backend.dto.usuario.UsuarioDto;
 import simple.food.backend.infrastructur.email.SpringMailSenderService;
 import simple.food.backend.infrastructur.exception.ErrorMessages;
 import simple.food.backend.infrastructur.exception.ServiceException;
@@ -86,5 +87,13 @@ public class UsuarioService {
         }
 
         throw new ServiceException(ErrorMessages.USER_NOT_AUTHORIZED, HttpStatus.UNAUTHORIZED);
+    }
+
+    public Usuario update(Long id, UsuarioDto usuarioRequest) {
+        Usuario usuario = findById(id);
+        usuario.update(usuarioRequest.getNome(), usuarioRequest.getEmail(), usuarioRequest.getNumeroWhatsapp(),
+                usuarioRequest.getMetaCaloriasDiarias());
+
+        return usuarioRepository.save(usuario);
     }
 }
