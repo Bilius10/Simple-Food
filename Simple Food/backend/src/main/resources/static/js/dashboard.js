@@ -394,6 +394,19 @@
 
     if (action === 'refresh-all') {
       refreshAll();
+      return;
+    }
+
+    // Nova acao: abrir editor de perfil do usuario autenticado
+    if (action === 'edit-profile') {
+      if (!userId) {
+        showToast('Usuario nao autenticado.');
+        return;
+      }
+
+      // redireciona para a rota de edicao; o template JS ira usar localStorage para confirmar o id
+      window.location.href = '/usuarios/' + encodeURIComponent(userId) + '/editar';
+      return;
     }
   }
 
