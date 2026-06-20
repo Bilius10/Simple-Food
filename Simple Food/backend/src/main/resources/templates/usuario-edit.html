@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/base :: html(
+        title='Editar perfil',
+        styles=~{::styles},
+        scripts=~{::scripts},
+        content=~{::content},
+        bodyClass='page-auth'
+      )}">
+
+<th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/css/auth.css}" />
+</th:block>
+
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/usuario-edit.js}" defer></script>
+</th:block>
+
+<section th:fragment="content" class="auth-layout" data-page="usuario-edit">
+    <article class="hero-panel surface-card">
+        <span class="eyebrow">Conta</span>
+        <h1>Editar perfil</h1>
+        <p class="hero-copy">Atualize seu nome, contato e metas para que o painel reflita suas preferências.</p>
+    </article>
+    <article class="auth-card surface-card">
+        <div class="section-heading">
+            <span class="eyebrow">Conta</span>
+            <h2>Editar perfil</h2>
+            <p>Atualize seus dados pessoais e preferências de meta diária.</p>
+        </div>
+
+        <form id="user-form" class="stack-form" novalidate>
+            <label class="field">
+                <span>Nome</span>
+                <input id="nome" name="nome" type="text" placeholder="Seu nome" required />
+            </label>
+
+            <label class="field">
+                <span>E-mail</span>
+                <input id="email" name="email" type="email" placeholder="voce@exemplo.com" disabled />
+            </label>
+
+            <label class="field">
+                <span>WhatsApp (opcional)</span>
+                <input id="numeroWhatsapp" name="numeroWhatsapp" type="tel" placeholder="5591999xxxx" />
+            </label>
+
+            <label class="field">
+                <span>Meta calorias diarias</span>
+                <input id="metaCaloriasDiarias" name="metaCaloriasDiarias" type="number" min="0" />
+            </label>
+
+            <div id="success" class="feedback success" role="status" aria-live="polite" hidden></div>
+            <div id="error" class="feedback error" role="alert" aria-live="polite" hidden></div>
+
+            <div class="form-actions">
+                <button id="save-btn" type="submit" class="btn-primary">Salvar</button>
+                <a th:href="@{/dashboard}" class="btn-secondary">Voltar</a>
+            </div>
+        </form>
+    </article>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</section>
+</html>

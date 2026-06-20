@@ -70,6 +70,7 @@ public class UsuarioService {
     }
 
     public Usuario findById(Long id) {
+        hasRoleOrIsOwner(id);
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ErrorMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
     }
