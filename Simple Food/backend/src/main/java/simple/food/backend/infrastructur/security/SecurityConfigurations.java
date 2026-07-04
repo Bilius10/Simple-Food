@@ -33,8 +33,7 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/registro", "/").permitAll();
-                    auth.requestMatchers("/dashboard").hasRole("USER");
-                    auth.anyRequest().permitAll();
+                    auth.anyRequest().hasRole("USER");
                 })
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler(accessDeniedHandler)
